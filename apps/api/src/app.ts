@@ -2024,11 +2024,16 @@ export async function createApp(
   app.get('/api/searches', async (request) => {
     await readBudget(request, 'searches-read', 240);
     const result = await database.pool.query(
-      `SELECT id, request, status, created_at AS "createdAt"
+      `SELECT id, request, status, created_at AS "createdAt", source_outcomes AS "sourceOutcomes"
       FROM search_runs WHERE owner_id = $1 ORDER BY created_at DESC, id DESC LIMIT 50`,
       [request.ownerId],
     );
-    return { items: result.rows };
+    return {
+      items: result.rows.map((run) => ({
+        ...run,
+        sourceOutcomes: run.sourceOutcomes ? sourceOutcomesSchema.parse(run.sourceOutcomes) : null,
+      })),
+    };
   });
   app.put('/api/search-jobs/:id/feedback', async (request, reply) => {
     if (!(await consumeRateLimit(request, `job-feedback:${request.ownerId!}`, 20, 3600)))

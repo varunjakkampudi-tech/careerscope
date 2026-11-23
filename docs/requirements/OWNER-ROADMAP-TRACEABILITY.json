@@ -1368,11 +1368,26 @@
       "stageTitle": "Multi-provider job discovery",
       "title": "Source health monitoring",
       "sourceStatus": "New",
-      "currentStatus": "not-started",
-      "evidence": ["docs/PROGRESS.md"],
-      "tests": [],
+      "currentStatus": "partial",
+      "evidence": [
+        "apps/api/src/app.ts",
+        "apps/web/src/lib/source-health.ts",
+        "apps/web/src/components/job-search-view.tsx",
+        "docs/PROGRESS.md",
+        "docs/GAP-MATRIX.md",
+        "apps/workers/search/src/collect.ts",
+        "packages/core/src/jobs.ts",
+        "apps/api/src/openapi.ts",
+        "apps/web/src/lib/api-schemas.ts",
+        "apps/web/src/lib/locale.ts"
+      ],
+      "tests": [
+        "apps/web/src/lib/source-health.test.ts",
+        "scripts/tests/check-ui.ts",
+        "apps/workers/search/src/collect.test.ts"
+      ],
       "externalEvidence": [],
-      "gap": "Stage has not started; item-level implementation and test evidence will be added as work is authorized.",
+      "gap": "Owner item 5.15 (Source health monitoring) remains partial. The owner-scoped search-history API returns up to 50 recorded runs, and the localized UI summarizes per-source outcomes, accepted counts, latest search-run timestamp, and average/latest source-collection elapsed time. Collection duration is recorded only when a source call is attempted; permission-blocked sources show no duration. The interface explicitly says these observations do not represent live provider availability. The scoped reporting implementation at exact head 3cb61ce730314aeecf2849dc12ab239383aab596 passed all three required hosted CI jobs in run 45192426932 and received independent ChatGPT approval against base fad57ea3253024983f29183acefaee59328d0d01. A later Firefox browser run failed because an obsolete Next.js /jobs prefetch remained pending after route changes. The test correction at exact head 76b9a14170f19f7cb323408c23ec70ead991ec75 limits the settlement exception to explicitly marked GET prefetches for known application routes after navigation; ordinary requests and writes remain checked. That exact head passed all three hosted jobs in run 45198233746 and received independent ChatGPT approval against the same base. The test correction does not implement system-wide operational telemetry, freshness/latency alerting, or automated source suspension after terms changes or repeated errors. No provider is activated. Owner checklist verification remains pending. PR #105 carries the current head-specific validation and review status.",
       "scopeDisposition": "in-scope"
     },
     {

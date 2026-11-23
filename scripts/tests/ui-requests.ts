@@ -69,6 +69,36 @@ export function staleEarlierRouteRead(
   );
 }
 
+/** Paths that the app router prefetches and the settlement helper recognizes. */
+export const NEXT_APP_ROUTE_PREFETCH_PATHS = [
+  '/dashboard',
+  '/jobs',
+  '/applications',
+  '/saved',
+  '/resume',
+  '/settings',
+  '/career-resources',
+  '/preparation',
+] as const;
+
+/** A marked Next.js route prefetch for a known page is irrelevant after leaving its start route. */
+export function staleNextRoutePrefetch(
+  method: string,
+  resourceType: string,
+  startedEpoch: number,
+  currentEpoch: number,
+  pathname: string,
+  isNextRouterPrefetch: boolean,
+): boolean {
+  return (
+    method === 'GET' &&
+    resourceType === 'fetch' &&
+    isNextRouterPrefetch &&
+    (NEXT_APP_ROUTE_PREFETCH_PATHS as readonly string[]).includes(pathname) &&
+    startedEpoch !== currentEpoch
+  );
+}
+
 /** Return a same-origin pathname only; never retain query strings or foreign URLs. */
 export function sameOriginBrowserPath(value: string, origin: string): string | null {
   try {

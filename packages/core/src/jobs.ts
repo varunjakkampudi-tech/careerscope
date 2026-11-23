@@ -76,6 +76,8 @@ export const sourceOutcomeSchema = z
     status: z.enum(['completed', 'empty', 'failed']),
     accepted: z.number().int().min(0).max(100),
     limited: z.boolean(),
+    /** Elapsed time for an attempted source collection; null when permission prevented a call. */
+    durationMs: z.number().int().min(0).max(120_000).nullable().optional(),
     errorCode: z
       .enum(['source_failed', 'source_timeout', 'invalid_response', 'source_permission_pending'])
       .nullable(),

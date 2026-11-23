@@ -6,6 +6,7 @@ import {
   browserWarningCategory,
   sameOriginBrowserPath,
   staleEarlierRouteRead,
+  staleNextRoutePrefetch,
   staleSavedRead,
   staleSearchRead,
 } from './ui-requests.js';
@@ -70,6 +71,17 @@ test('settlement drops only fetch and script reads belonging to an earlier route
   for (const engine of ['firefox', 'webkit', '']) {
     assert.equal(staleEarlierRouteRead('GET', 'fetch', 1, 2, engine), false, engine);
     assert.equal(staleEarlierRouteRead('GET', 'script', 1, 2, engine), false, engine);
+  }
+});
+
+test('settlement drops only marked known-route prefetches from an earlier route', () => {
+  for (const engine of ['chromium', 'firefox', 'webkit']) {
+    assert.equal(staleNextRoutePrefetch('GET', 'fetch', 1, 2, '/jobs', true), true, engine);
+    assert.equal(staleNextRoutePrefetch('GET', 'fetch', 2, 2, '/jobs', true), false, engine);
+    assert.equal(staleNextRoutePrefetch('GET', 'fetch', 1, 2, '/api/jobs', true), false, engine);
+    assert.equal(staleNextRoutePrefetch('GET', 'fetch', 1, 2, '/jobs', false), false, engine);
+    assert.equal(staleNextRoutePrefetch('POST', 'fetch', 1, 2, '/jobs', true), false, engine);
+    assert.equal(staleNextRoutePrefetch('GET', 'document', 1, 2, '/jobs', true), false, engine);
   }
 });
 

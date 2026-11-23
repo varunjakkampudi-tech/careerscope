@@ -261,14 +261,22 @@
     {
       "path": "apps/api/src/app.ts",
       "category": "backend-api",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "prior full-file review plus current change-diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed route schemas and wiring for candidate resume target-role and version-group metadata; validation, listing and upload coordination are consistent.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "608697156e7369b604bd0c7c9a9b05f72b4473f08f0e1e414c51fb80b9b32260"
+      "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
+      "evidence": "Prior implementation SHA f9e6aebb2d7beca3044dae5301f2ca28400c27c2 passed hosted run 43970259059; documentation follow-up SHA 2fc990b8dda4fb6aeb03f14a5e86e27606a09737 passed run 43975092546. Run 43978471041 exposed an ambiguous accepted-count locator; the test now scopes that assertion to Greenhouse. Corrected exact-head CI is pending.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
+      "sha256": "09ec7efd0fdf91ccc27ee37f72beb0cfea1f574059a8118115ac68cfcc100935",
+      "history": [
+        {
+          "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+          "observations": "Reviewed route schemas and wiring for candidate resume target-role and version-group metadata; validation, listing and upload coordination are consistent.",
+          "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+          "sha256": "608697156e7369b604bd0c7c9a9b05f72b4473f08f0e1e414c51fb80b9b32260"
+        }
+      ]
     },
     {
       "path": "apps/api/src/application-export.test.ts",
@@ -433,10 +441,18 @@
           "remediation": "Declared the required jobId parameter with the shared UUID schema in apps/api/src/openapi.ts; a generated-document probe confirmed the format."
         }
       ],
-      "observations": "Reviewed OpenAPI upload and listing contract additions for target role and version lineage.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "214ffecd324c7f6ef0c95bd73118fe978281575bbe70d8a9abe90335183a30b8"
+      "observations": "Reviewed the optional nullable duration field in documented source-outcome responses; required legacy fields remain unchanged.",
+      "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+      "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+      "sha256": "aaf36ff19e9f556929937ff100123b3e75ad68a509cba2865c63efbd6143644f",
+      "history": [
+        {
+          "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+          "observations": "Reviewed OpenAPI upload and listing contract additions for target role and version lineage.",
+          "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+          "sha256": "214ffecd324c7f6ef0c95bd73118fe978281575bbe70d8a9abe90335183a30b8"
+        }
+      ]
     },
     {
       "path": "apps/api/src/otp-limits.test.ts",
@@ -1099,26 +1115,54 @@
     {
       "path": "apps/web/src/components/job-search-view.module.css",
       "category": "frontend",
-      "reviewMethod": "content-read",
+      "reviewMethod": "prior full-file review plus current change-diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete job-search source/discovery styles. Source options use responsive columns, unavailable states retain readable contrast, and selection controls have visible focus and touch sizing.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "5a9f7c73f40453672c10f23b6a71e82963a9a027522bf75f9f6b4c96231402f2"
+      "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
+      "evidence": "Prior implementation SHA f9e6aebb2d7beca3044dae5301f2ca28400c27c2 passed hosted run 43970259059; documentation follow-up SHA 2fc990b8dda4fb6aeb03f14a5e86e27606a09737 passed run 43975092546. Run 43978471041 exposed an ambiguous accepted-count locator; the test now scopes that assertion to Greenhouse. Corrected exact-head CI is pending.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
+      "sha256": "7f732af737c18e170344a3fdd8bec0b80b95a040238e10188b461e03d15096f3",
+      "history": [
+        {
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "observations": "Read the complete job-search source/discovery styles. Source options use responsive columns, unavailable states retain readable contrast, and selection controls have visible focus and touch sizing.",
+          "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
+          "sha256": "5a9f7c73f40453672c10f23b6a71e82963a9a027522bf75f9f6b4c96231402f2"
+        }
+      ]
     },
     {
       "path": "apps/web/src/components/job-search-view.tsx",
       "category": "frontend",
-      "reviewMethod": "content-read",
+      "reviewMethod": "prior full-file review plus current change-diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read the complete search workspace component. Owner-scoped queries remain disabled until the authenticated session resolves; mutations include CSRF and idempotency headers; run IDs are URL-addressable; event streams close on settle/unmount and trigger centralized expiry handling. Result links open in a new tab with noopener protections. No additional finding from this file review.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "1599695e8eab6aaaf54b5efd0e54f88d5849a1b4b6e2d6f66689082402e361a9"
+      "observations": "Reviewed localized per-source elapsed durations and a search-run timestamp derived from createdAt; the UI does not claim a precise provider completion time or live availability.",
+      "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+      "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+      "sha256": "597ee83805d6b3062755d410a5b04c1dca03eed2f7ce3108c2ea3b5bde23ba2f",
+      "history": [
+        {
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "observations": "Read the complete search workspace component. Owner-scoped queries remain disabled until the authenticated session resolves; mutations include CSRF and idempotency headers; run IDs are URL-addressable; event streams close on settle/unmount and trigger centralized expiry handling. Result links open in a new tab with noopener protections. No additional finding from this file review.",
+          "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
+          "sha256": "1599695e8eab6aaaf54b5efd0e54f88d5849a1b4b6e2d6f66689082402e361a9"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
+          "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
+          "evidence": "Prior implementation SHA f9e6aebb2d7beca3044dae5301f2ca28400c27c2 passed hosted run 43970259059; documentation follow-up SHA 2fc990b8dda4fb6aeb03f14a5e86e27606a09737 passed run 43975092546. Run 43978471041 exposed an ambiguous accepted-count locator; the test now scopes that assertion to Greenhouse. Corrected exact-head CI is pending.",
+          "sha256": "3adc9583e1286b252f0530dd57836308a8202fc96a60ad960d930f42046fbe98"
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+          "observations": "Reviewed localized latest and average elapsed-duration display and full run timestamp; recorded outcomes remain clearly distinguished from live availability.",
+          "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+          "sha256": "3d8b7987d813b8a729b9b3454d0f4203ead5ab6bc32b35d26fb8dd0718b56570"
+        }
+      ]
     },
     {
       "path": "apps/web/src/components/legal-acceptance.module.css",
@@ -1338,14 +1382,28 @@
     {
       "path": "apps/web/src/lib/api-schemas.ts",
       "category": "frontend",
-      "reviewMethod": "content-read-and-diff-review",
+      "reviewMethod": "prior full-file review plus current change-diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed response validation for resume role, group and version fields.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "b70601872ca1f347f8a1b4a141c8f59ed184d2d357683aa947ed09197f6115b5"
+      "observations": "Reviewed optional bounded duration parsing for backward compatibility with historical source outcomes.",
+      "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+      "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+      "sha256": "fb313e1eb6d5a26fce7338aed3d92f2ad79cc4b21383215c446088876f0351d3",
+      "history": [
+        {
+          "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+          "observations": "Reviewed response validation for resume role, group and version fields.",
+          "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+          "sha256": "b70601872ca1f347f8a1b4a141c8f59ed184d2d357683aa947ed09197f6115b5"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
+          "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
+          "evidence": "Prior implementation SHA f9e6aebb2d7beca3044dae5301f2ca28400c27c2 passed hosted run 43970259059; documentation follow-up SHA 2fc990b8dda4fb6aeb03f14a5e86e27606a09737 passed run 43975092546. The new accepted-count and audit-history corrections require exact-head CI.",
+          "sha256": "e00225fe684bd628b38f7dc8220a237b724ef8f9459c3710293e214780e2e075"
+        }
+      ]
     },
     {
       "path": "apps/web/src/lib/api.test.ts",
@@ -1410,14 +1468,46 @@
     {
       "path": "apps/web/src/lib/locale.ts",
       "category": "frontend",
-      "reviewMethod": "content-and-structural-review",
+      "reviewMethod": "prior full-file review plus current change-diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the typed en/te/hi message catalogue, locale allowlist, interpolation/error mapping, useSyncExternalStore storage fallback and SSR default. TypeScript enforces matching keys across locale objects, and locale.test.ts covers key groups and interpolation. Native-speaker translation quality was not independently validated; machine-drafted labels remain a release review item. Focused item 2.06 delta reviewed on the current merge candidate: privacy wording is acknowledgement-only, and the rendered accessible label plus locale assertions include the complete wording. Native Telugu/Hindi review remains outstanding.",
-      "evidence": "Locale implementation and representative message groups inspected on codex/stage01-item-101-audit; structural parity is enforced by the full typecheck. Current item 2.06 delta inspected; prior exact-head hosted CI run 42486600111 passed on bdc065071a44684be93669d0a3f4bb5af1c70a4b. Current merge candidate still requires exact-head CI.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "75e45067aee7990decb4433d3c5e5a4499274933e5b65a938e2fb8eaae91ffcc"
+      "observations": "Reviewed current source duration change and regression assertion; prior audit history is preserved.",
+      "evidence": "Exact-head run 44490477511: quality gate failed formatting under locked Prettier 3.9.9 after local formatter-version drift; services suite found partial search outcome assertion missing the additive durationMs field. Corrected with locked formatter and regression assertion; new exact-head CI pending.",
+      "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+      "sha256": "c173879b0903b50eca6f215f7ad5841ac6944aaf9f99dd312c320c735fde402d",
+      "history": [
+        {
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "observations": "Reviewed the typed en/te/hi message catalogue, locale allowlist, interpolation/error mapping, useSyncExternalStore storage fallback and SSR default. TypeScript enforces matching keys across locale objects, and locale.test.ts covers key groups and interpolation. Native-speaker translation quality was not independently validated; machine-drafted labels remain a release review item. Focused item 2.06 delta reviewed on the current merge candidate: privacy wording is acknowledgement-only, and the rendered accessible label plus locale assertions include the complete wording. Native Telugu/Hindi review remains outstanding.",
+          "evidence": "Locale implementation and representative message groups inspected on codex/stage01-item-101-audit; structural parity is enforced by the full typecheck. Current item 2.06 delta inspected; prior exact-head hosted CI run 42486600111 passed on bdc065071a44684be93669d0a3f4bb5af1c70a4b. Current merge candidate still requires exact-head CI.",
+          "sha256": "75e45067aee7990decb4433d3c5e5a4499274933e5b65a938e2fb8eaae91ffcc"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
+          "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
+          "evidence": "Prior implementation SHA f9e6aebb2d7beca3044dae5301f2ca28400c27c2 passed hosted run 43970259059; documentation follow-up SHA 2fc990b8dda4fb6aeb03f14a5e86e27606a09737 passed run 43975092546. The new accepted-count and audit-history corrections require exact-head CI.",
+          "sha256": "45e2fc6424b8753f7476e42b4cb92aace3e6c3fd2683d4e4cb9a991e614245c8"
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+          "observations": "Reviewed English, Telugu, and Hindi labels for average/latest elapsed collection duration and missing observations.",
+          "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+          "sha256": "85b0ca46890b9837aff6fad74f30ed8eb51a8bbac9c65322674c183522919e9e"
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+          "observations": "Reviewed source-health localization/tests for elapsed durations and accurate search-run timestamp wording.",
+          "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+          "sha256": "c173879b0903b50eca6f215f7ad5841ac6944aaf9f99dd312c320c735fde402d"
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+          "observations": "Reviewed all three locale labels for average/latest elapsed duration and latest search-run time; retained formatted translations without implying a live health signal.",
+          "evidence": "Hosted run 44490187735 exposed stale manifest hashes after the commit formatter rewrote this file; updated active hashes preserve prior records. Updated-head CI pending.",
+          "sha256": "1661f213d5e3017f94fcaf2a64523d36ad82e1487a7d9a39ad5589e5841789c3"
+        }
+      ]
     },
     {
       "path": "apps/web/src/lib/next-proxy-headers.test.ts",
@@ -1510,6 +1600,58 @@
       "evidence": "Current source content inspected on codex/stage01-item-101-audit; SHA-256 records the reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.01)",
       "sha256": "b6c3d453b66273da14035e6d9622a1509c851e2ac303c39438b10ac10ce45bd8"
+    },
+    {
+      "path": "apps/web/src/lib/source-health.test.ts",
+      "category": "frontend",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed source-health localization/tests for elapsed durations and accurate search-run timestamp wording.",
+      "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+      "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+      "sha256": "9e8fd11291c958ffdd837f2c3e1ba86caabab2a60645f47a0a1def45b225551e",
+      "history": [
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
+          "observations": "Read the full aggregation test file. Covers mixed source outcomes, accepted counts, latest status/date, permission-pending categorization, empty history and missing outcomes.",
+          "evidence": "Node 24 focused test passed 2/2; web/API typecheck passed. Exact-head CI and browser execution remain pending.",
+          "sha256": "17cc729010ef502cf3fef7802e6e3e651ff01a1aea1bb804e7b1492f6c26bdbe"
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+          "observations": "Reviewed aggregation of measured durations, unmeasured permission-blocked outcomes, historical records without duration, and latest status.",
+          "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+          "sha256": "1c1742c2b1b6206985a7d607b23df464c6a366ba4b24a5a79f1eded1595cbd51"
+        }
+      ]
+    },
+    {
+      "path": "apps/web/src/lib/source-health.ts",
+      "category": "frontend",
+      "reviewMethod": "content-read",
+      "state": "reviewed",
+      "concerns": [],
+      "findings": [],
+      "observations": "Reviewed averaging measured source collection durations and labeling createdAt as the latest search-run timestamp.",
+      "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+      "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+      "sha256": "55774b641f3622507139d8a90411e6c46e8d9329f8d8be62df539da2e1ee5037",
+      "history": [
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
+          "observations": "Read the full aggregation helper. It summarizes validated source outcomes from newest-first owner-scoped search history and performs no live availability checks or provider actions.",
+          "evidence": "Node 24 focused test passed 2/2; web/API typecheck passed. Exact-head CI and browser execution remain pending.",
+          "sha256": "8bb0f7492b8f076876a3ddf1525cdb4e7a257130c6926cd9e38df3dd3d230815"
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+          "observations": "Reviewed owner-history aggregation for bounded source durations, average/latest values, and compatibility with old rows.",
+          "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+          "sha256": "7d66b81ffe167b810abefd2629b5f7a72dae5b96d44c99f32295e36e7d2c1003"
+        }
+      ]
     },
     {
       "path": "apps/web/src/lib/theme.ts",
@@ -1622,10 +1764,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Prior dev audit: Read the complete file. Collection tests use synthetic profiles and provider responses, stub all HTTP calls, cover permission gates, partial failures, cancellation, deadlines, validation and attribution. No finding.\n\nStage 04 PR #72 audit history: Read the complete file. Collection tests use synthetic profiles and provider responses, stub all HTTP calls, cover permission gates, partial failures, cancellation, deadlines, validation and attribution. No finding. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.\n\nUpdated item 4.05 type/test fixture or assertions for bounded field-level resume extraction evidence; current local domain suite and typecheck pass.\n\nItem 4.05 follow-up test or typed fixture: bounded source evidence coverage for derived skills, titles, experience-years and education is validated; test suite and canonical test typecheck pass.\nStage 04 item 4.05 follow-up reviewed: schema/parser plumbing adds a backward-compatible bounded experienceClaims array whose employment claims remain unverified; tests cover explicit-section provenance, dates, duplicate role lines, dated project bullets and no employer invention. Local domain suite passed 934 tests across 33 files, typecheck passed (97 canonical test files), formatting and traceability passed, lint had zero errors. Runtime Node is below required Node 24; exact-head CI and independent review are pending.",
-      "evidence": "Prior dev audit: Complete file reviewed on 2026-11-06; SHA-256 records reviewed bytes.\n\nStage 04 PR #72 audit history: Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.\nCurrent item 4.05 follow-up: local domain tests passed (923 tests across 33 files); typecheck passed including 97 canonical test files; traceability passed for 328 items across 22 stages. Exact-head hosted CI and independent review remain pending.\nCurrent item 4.05 follow-up: local domain suite passed (923 tests across 33 files), typecheck passed (97 canonical test files), and roadmap traceability passed (328 items across 22 stages). Exact-head hosted CI and independent review remain pending.\nLocal validation on current worktree: 934 domain tests passed across 33 files; typecheck including 97 canonical test files, format, lint (zero errors), and 328-item/22-stage traceability passed. Stage 01 manifest hash refreshed for the reviewed bytes. Exact-head hosted CI and independent review pending; this does not close item 4.05.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "bb3814671498c171107cf6d0662758d1ed4396f2e155eff745566e6b528aa286"
+      "observations": "Reviewed source outcome duration assertions and permission-denied null duration assertions.",
+      "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+      "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+      "sha256": "7ca1a40ee16b2a3e1f0090088868e03781b773dd183d3b5bc5b8f1ea16923786",
+      "history": [
+        {
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "observations": "Prior dev audit: Read the complete file. Collection tests use synthetic profiles and provider responses, stub all HTTP calls, cover permission gates, partial failures, cancellation, deadlines, validation and attribution. No finding.\n\nStage 04 PR #72 audit history: Read the complete file. Collection tests use synthetic profiles and provider responses, stub all HTTP calls, cover permission gates, partial failures, cancellation, deadlines, validation and attribution. No finding. Current Stage 04 item 4.05 change reviewed: resume education lines are copied only from the explicit education section, preserved verbatim as unverified candidate claims, bounded by the shared schema, and covered by focused tests. This record pins current candidate bytes; exact-head CI and independent review for PR #72 remain pending.\n\nUpdated item 4.05 type/test fixture or assertions for bounded field-level resume extraction evidence; current local domain suite and typecheck pass.\n\nItem 4.05 follow-up test or typed fixture: bounded source evidence coverage for derived skills, titles, experience-years and education is validated; test suite and canonical test typecheck pass.\nStage 04 item 4.05 follow-up reviewed: schema/parser plumbing adds a backward-compatible bounded experienceClaims array whose employment claims remain unverified; tests cover explicit-section provenance, dates, duplicate role lines, dated project bullets and no employer invention. Local domain suite passed 934 tests across 33 files, typecheck passed (97 canonical test files), formatting and traceability passed, lint had zero errors. Runtime Node is below required Node 24; exact-head CI and independent review are pending.",
+          "evidence": "Prior dev audit: Complete file reviewed on 2026-11-06; SHA-256 records reviewed bytes.\n\nStage 04 PR #72 audit history: Focused review of the current item 4.05 change and its tests; local Node 24 domain suite, build, typecheck, traceability and formatting passed. Hosted exact-head CI failed the file-audit gate because these hashes were stale; this refresh corrects hashes only and does not close item 4.05. Independent review remains pending.\nCurrent item 4.05 follow-up: local domain tests passed (923 tests across 33 files); typecheck passed including 97 canonical test files; traceability passed for 328 items across 22 stages. Exact-head hosted CI and independent review remain pending.\nCurrent item 4.05 follow-up: local domain suite passed (923 tests across 33 files), typecheck passed (97 canonical test files), and roadmap traceability passed (328 items across 22 stages). Exact-head hosted CI and independent review remain pending.\nLocal validation on current worktree: 934 domain tests passed across 33 files; typecheck including 97 canonical test files, format, lint (zero errors), and 328-item/22-stage traceability passed. Stage 01 manifest hash refreshed for the reviewed bytes. Exact-head hosted CI and independent review pending; this does not close item 4.05.",
+          "sha256": "bb3814671498c171107cf6d0662758d1ed4396f2e155eff745566e6b528aa286"
+        }
+      ]
     },
     {
       "path": "apps/workers/search/src/collect.ts",
@@ -1634,10 +1784,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (380 lines). Checked: exact source attribution; per-source and whole-run timeouts; at most 20 detail fetches; per-posting validation that skips a malformed posting without losing the rest of the results and records only field paths; outcome statuses that distinguish empty from failed; deduplication with disambiguated link buckets; fenced start and settle; permission-pending outcomes for sources without a current permission profile; empty-streak diagnostics that cannot fail a completed search. No defect found. Scoring read uses the snapshot taken at search creation.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "607a72b745e695635f3c85f95eaa527b6b47c93811df5ea53efdbf31ccf6cb9b"
+      "observations": "Reviewed monotonic elapsed-time capture around each attempted provider collection and null duration for permission-blocked sources.",
+      "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+      "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+      "sha256": "b30f87dc7a93ff32d665413ef6cc260668a798a59b4b708af90a730d399dab27",
+      "history": [
+        {
+          "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+          "observations": "Read in full (380 lines). Checked: exact source attribution; per-source and whole-run timeouts; at most 20 detail fetches; per-posting validation that skips a malformed posting without losing the rest of the results and records only field paths; outcome statuses that distinguish empty from failed; deduplication with disambiguated link buckets; fenced start and settle; permission-pending outcomes for sources without a current permission profile; empty-streak diagnostics that cannot fail a completed search. No defect found. Scoring read uses the snapshot taken at search creation.",
+          "evidence": "",
+          "sha256": "607a72b745e695635f3c85f95eaa527b6b47c93811df5ea53efdbf31ccf6cb9b"
+        }
+      ]
     },
     {
       "path": "apps/workers/search/src/files.ts",
@@ -1884,14 +2042,14 @@
     {
       "path": "docs/GAP-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "focused-content-review",
+      "reviewMethod": "prior full-file review plus current change-diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
-      "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "c1da30afc49df98eff48043d4cf1a3308261e8405c0a8d3e1acd31c28760c50d",
+      "observations": "Reviewed the source-health evidence and browser request-settlement cleanup. Documentation distinguishes the scoped source-health implementation from outstanding system monitoring, alerting, source suspension and owner-acceptance requirements. The browser helper and diagnostics share the same recognized route-prefetch path list.",
+      "evidence": "Exact head 3cb61ce730314aeecf2849dc12ab239383aab596 passed required CI run 45192426932 and received independent approval. Exact head 76b9a14170f19f7cb323408c23ec70ead991ec75 passed all required CI jobs in run 45198233746 and received independent approval. The current change centralizes the known-route list and reconciles the historical evidence; its exact-head CI/review are tracked on PR #105.",
+      "reviewer": "Codex (Stage 05 item 5.15 review-evidence cleanup)",
+      "sha256": "a31f3e7c7b4158a5ed29d01b3fdd5716c0e6c2763609101e183e8bb680716b73",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2012,6 +2170,54 @@
           "sha256": "da3b553a8b588deb6952f61cd3f2440c5810c59a294fbda85f29215eb4539433",
           "observations": "Reviewed Stage 05 items 5.08 and 5.09 evidence and gaps; both remain partial and no external source acceptance is claimed.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
+          "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
+          "sha256": "c1da30afc49df98eff48043d4cf1a3308261e8405c0a8d3e1acd31c28760c50d"
+        },
+        {
+          "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
+          "evidence": "Runs 43978471041, 43980466911, 43982429916 and 43983664244 exposed browser assertion/selector issues. This file records the observed failure and the current source-text-filter correction; exact-head CI remains pending.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
+          "sha256": "a84cf17b99f48d9ffaa862022fcd9a9fe0fd4f49bfd6c5e95ada0c288ea5fc61"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
+          "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
+          "evidence": "Runs 43978471041, 43980466911, 43982429916 and 43983664244 exposed browser assertion and selector issues. Exact head 56981cb0f7053d6147ce5f8318ef2a6dd9ec4900 passed all required jobs in run 43984937809. Independent exact-SHA review remains pending; item 5.15 remains partial for operational monitoring/freshness gaps.",
+          "sha256": "dc0aea4aef818a3ca4de56987423f27ee79b172e46389a9cc64207152e84d1a8"
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+          "observations": "Reviewed exact partial status and distinction between per-owner history, operational monitoring, alerting, and automated suspension.",
+          "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+          "sha256": "618424b8045147a80df4d1a94f13507924b3c69b04397a5092ac35b8002056bb"
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+          "observations": "Reviewed documentation stating source collection elapsed time and latest search-run timestamp while preserving partial status and pending gates.",
+          "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+          "sha256": "d2753011c138834257d6a47b3090f61ea918490074c3d9484eb56313efa8c63b"
+        },
+        {
+          "sha256": "14ebb3f013976740179ff340a23a999639fa36fe46b6fd33f8b3b65b030ef41d",
+          "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+          "observations": "Reviewed Stage 05 item 5.15 evidence, exact-hosted-run failures, corrections and remaining partial acceptance gates.",
+          "evidence": "Current exact-head hosted CI run 44490477511: production image build passed; quality failed due local formatter-version drift, and integration suite found a partial-search assertion that omitted durationMs. Corrections and exact-SHA rerun are pending."
+        },
+        {
+          "sha256": "0663f97ac163fdb2a5221c800c0c567fe283772a5f3293689c92108e5a92b67b",
+          "reviewer": "Codex (Stage 05 item 5.15 CI evidence update)",
+          "observations": "Updated Stage 05.15 evidence to record exact-head CI while preserving the operational monitoring and owner-acceptance gaps.",
+          "evidence": "Exact head 16ad8cb4b29732733e4b595f08ba0a705c4ba59d passed all three required Node 24 hosted CI jobs in run 45190079618. Item 5.15 remains partial pending independent review, operational monitoring, and owner acceptance."
+        },
+        {
+          "sha256": "91b3ddf17987199bd9fc0dd9dee1c1a805c21e6a5ae80a676025b668f80335d0",
+          "reviewer": "Codex (Stage 05 item 5.15 evidence reconciliation)",
+          "observations": "Reviewed the Stage 05 item 5.15 progress, gap, test and owner-traceability records. The records distinguish the exact-head CI and ChatGPT approval for the scoped historical reporting change from the incomplete full checklist item; system-wide operational telemetry, alerting, automated suspension and owner verification remain pending.",
+          "evidence": "Exact head 3cb61ce730314aeecf2849dc12ab239383aab596 against dev base fad57ea3253024983f29183acefaee59328d0d01 passed all three required hosted jobs in run 45192426932 and received an independent ChatGPT approval limited to the scoped implementation. This documentation-only follow-up requires its own exact-head CI and review."
         }
       ]
     },
@@ -2074,7 +2280,7 @@
     {
       "path": "docs/PROGRESS.md",
       "category": "documentation",
-      "reviewMethod": "focused-content-review",
+      "reviewMethod": "prior full-file review plus current change-diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -2086,10 +2292,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
-      "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "e878a870fc401f347557e5e9045aec73e85e155f55dc79b5013345420b6a45dd",
+      "observations": "Reviewed the source-health evidence and browser request-settlement cleanup. Documentation distinguishes the scoped source-health implementation from outstanding system monitoring, alerting, source suspension and owner-acceptance requirements. The browser helper and diagnostics share the same recognized route-prefetch path list.",
+      "evidence": "Exact head 3cb61ce730314aeecf2849dc12ab239383aab596 passed required CI run 45192426932 and received independent approval. Exact head 76b9a14170f19f7cb323408c23ec70ead991ec75 passed all required CI jobs in run 45198233746 and received independent approval. The current change centralizes the known-route list and reconciles the historical evidence; its exact-head CI/review are tracked on PR #105.",
+      "reviewer": "Codex (Stage 05 item 5.15 review-evidence cleanup)",
+      "sha256": "c0b124a8061952816f4585063b1f6a006d4a23bcab574955c1d3261185a1c184",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2228,6 +2434,54 @@
           "sha256": "9dcdfecb8ac4591ecf0fc959813bbd5bb6f74411ddd3c2c0374fc03bd52208b4",
           "observations": "Reviewed Stage 05 item 5.08 and 5.09 status, focused test/build evidence, and remaining adapter-mapping and false-merge limitations.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "observations": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
+          "evidence": "Updated Stage 05 item 5.13 progress with superseded-head hosted CI success, current exact-head run 43953804376, 56/56 focused tests, and pending independent review.",
+          "sha256": "e878a870fc401f347557e5e9045aec73e85e155f55dc79b5013345420b6a45dd"
+        },
+        {
+          "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
+          "evidence": "Runs 43978471041, 43980466911, 43982429916 and 43983664244 exposed browser assertion/selector issues. This file records the observed failure and the current source-text-filter correction; exact-head CI remains pending.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
+          "sha256": "30c594037fe981d8441bdb0cf978e8ebc6a26de36c854d39a5f52357d6b3823c"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
+          "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
+          "evidence": "Runs 43978471041, 43980466911, 43982429916 and 43983664244 exposed browser assertion and selector issues. Exact head 56981cb0f7053d6147ce5f8318ef2a6dd9ec4900 passed all required jobs in run 43984937809. Independent exact-SHA review remains pending; item 5.15 remains partial for operational monitoring/freshness gaps.",
+          "sha256": "cb8e96774d14b541f89e7fd39f9dcf19a87fc681c049f90c49d85ba0d5d18709"
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+          "observations": "Reviewed exact local verification evidence and pending exact-head hosted CI/review status.",
+          "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+          "sha256": "dbeb2bb5caafc745e88178a0f78a2fc04987eefebe47bceea98ce05daf2ed590"
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+          "observations": "Reviewed documentation stating source collection elapsed time and latest search-run timestamp while preserving partial status and pending gates.",
+          "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+          "sha256": "a0830f50508f101719a6e32bebd7449dcdcdcf13545f784bb544baa952e9a44f"
+        },
+        {
+          "sha256": "527d7df750d60efdbe529f61d7b8cda6e7203b7de0e5406cea385fc0b9bcfa57",
+          "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+          "observations": "Reviewed Stage 05 item 5.15 evidence, exact-hosted-run failures, corrections and remaining partial acceptance gates.",
+          "evidence": "Current exact-head hosted CI run 44490477511: production image build passed; quality failed due local formatter-version drift, and integration suite found a partial-search assertion that omitted durationMs. Corrections and exact-SHA rerun are pending."
+        },
+        {
+          "sha256": "0ebe7efbc726d3ed335178875e9adbb0bb7f4944f49bb4a419f498cf082a8fb6",
+          "reviewer": "Codex (Stage 05 item 5.15 CI evidence update)",
+          "observations": "Updated Stage 05.15 evidence to record exact-head CI while preserving the operational monitoring and owner-acceptance gaps.",
+          "evidence": "Exact head 16ad8cb4b29732733e4b595f08ba0a705c4ba59d passed all three required Node 24 hosted CI jobs in run 45190079618. Item 5.15 remains partial pending independent review, operational monitoring, and owner acceptance."
+        },
+        {
+          "sha256": "5a34dc0af891ec7ed35564b9dc9c98b1aac01fae2156441086ed2db2b2c95364",
+          "reviewer": "Codex (Stage 05 item 5.15 evidence reconciliation)",
+          "observations": "Reviewed the Stage 05 item 5.15 progress, gap, test and owner-traceability records. The records distinguish the exact-head CI and ChatGPT approval for the scoped historical reporting change from the incomplete full checklist item; system-wide operational telemetry, alerting, automated suspension and owner verification remain pending.",
+          "evidence": "Exact head 3cb61ce730314aeecf2849dc12ab239383aab596 against dev base fad57ea3253024983f29183acefaee59328d0d01 passed all three required hosted jobs in run 45192426932 and received an independent ChatGPT approval limited to the scoped implementation. This documentation-only follow-up requires its own exact-head CI and review."
         }
       ]
     },
@@ -2278,14 +2532,14 @@
     {
       "path": "docs/TEST-MATRIX.md",
       "category": "documentation",
-      "reviewMethod": "focused-content-review",
+      "reviewMethod": "prior full-file review plus current change-diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
-      "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4",
+      "observations": "Reviewed the Stage 05 item 5.15 test and status record. It records exact historical CI/review evidence and preserves the item as partial for unimplemented operational health monitoring, alerting, suspension and owner verification.",
+      "evidence": "Exact heads 3cb61ce730314aeecf2849dc12ab239383aab596 and 76b9a14170f19f7cb323408c23ec70ead991ec75 passed their recorded exact-head CI and review gates. Current PR #105 holds the follow-up route-list cleanup and its exact-head validation.",
+      "reviewer": "Codex (Stage 05 item 5.15 review-evidence cleanup)",
+      "sha256": "7eed82c21e708838a78893cb95177a830e64755b9ad088d4856ed327b93f8a69",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2412,6 +2666,66 @@
           "sha256": "d08de3ad68f62e21c10744dc048c1e91a6c2f831382d1e8efe31b8ee32ab3b4d",
           "observations": "Reviewed item-specific Stage 05 normalization and deduplication test evidence and exact-head gates.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
+          "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
+          "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4"
+        },
+        {
+          "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
+          "evidence": "Runs 43978471041, 43980466911, 43982429916 and 43983664244 exposed browser assertion/selector issues. Current docs record those failures and the source-text-filter correction; exact-head CI remains pending.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
+          "sha256": "4a01757a121629b746b31c215c74ab348a5920ad4f6c13282ef0c091dc6f5c8f"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
+          "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
+          "evidence": "Runs 43978471041, 43980466911, 43982429916 and 43983664244 exposed browser assertion and selector issues. Exact head 56981cb0f7053d6147ce5f8318ef2a6dd9ec4900 passed all required jobs in run 43984937809. Independent exact-SHA review remains pending; item 5.15 remains partial for operational monitoring/freshness gaps.",
+          "sha256": "7b291870f53e0b4d1c4c8723bdd57cbfcfa4ff739aaa71abbfa5b05e1bed29c6"
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+          "observations": "Reviewed changed files, local test/build/typecheck evidence, and remaining verification gates.",
+          "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+          "sha256": "8e8414938b7db4e0b4f3c584c0c201d17e43a134a2d4047db8ddaf3192506bbc"
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+          "observations": "Reviewed documentation stating source collection elapsed time and latest search-run timestamp while preserving partial status and pending gates.",
+          "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+          "sha256": "8e8414938b7db4e0b4f3c584c0c201d17e43a134a2d4047db8ddaf3192506bbc"
+        },
+        {
+          "sha256": "26e03f2a7d91341aedaa65b07bda0de0d0ac749e5edcd5f480018705ab9742e1",
+          "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+          "observations": "Reviewed Stage 05 item 5.15 evidence, exact-hosted-run failures, corrections and remaining partial acceptance gates.",
+          "evidence": "Current exact-head hosted CI run 44490477511: production image build passed; quality failed due local formatter-version drift, and integration suite found a partial-search assertion that omitted durationMs. Corrections and exact-SHA rerun are pending."
+        },
+        {
+          "sha256": "9fd307c37aefbe2b1f417a24b004d2d07616be4277b06799874b02bcb693a8fe",
+          "reviewer": "Codex (Stage 05 item 5.15 CI evidence update)",
+          "observations": "Updated Stage 05.15 evidence to record exact-head CI while preserving the operational monitoring and owner-acceptance gaps.",
+          "evidence": "Exact head 16ad8cb4b29732733e4b595f08ba0a705c4ba59d passed all three required Node 24 hosted CI jobs in run 45190079618. Item 5.15 remains partial pending independent review, operational monitoring, and owner acceptance."
+        },
+        {
+          "sha256": "322426dee7ccf1f17581e5e9e144ee5ded7e5f16de2da8a66615e13115d502ad",
+          "reviewer": "Codex (Stage 05 item 5.15 evidence reconciliation)",
+          "observations": "Reviewed the Stage 05 item 5.15 progress, gap, test and owner-traceability records. The records distinguish the exact-head CI and ChatGPT approval for the scoped historical reporting change from the incomplete full checklist item; system-wide operational telemetry, alerting, automated suspension and owner verification remain pending.",
+          "evidence": "Exact head 3cb61ce730314aeecf2849dc12ab239383aab596 against dev base fad57ea3253024983f29183acefaee59328d0d01 passed all three required hosted jobs in run 45192426932 and received an independent ChatGPT approval limited to the scoped implementation. This documentation-only follow-up requires its own exact-head CI and review."
+        },
+        {
+          "sha256": "2fb60ea1ab0331dcb4e9f73f56a9c41b99d9b3405f2a78af71bed667d8d422f4",
+          "reviewer": "Codex (Stage 05 item 5.15 evidence reconciliation)",
+          "observations": "Reviewed the Stage 05 item 5.15 progress, gap, test and owner-traceability records. The records distinguish exact-head CI and ChatGPT approval for the scoped historical reporting change from the incomplete full checklist item; system-wide operational telemetry, alerting, automated suspension and owner verification remain pending.",
+          "evidence": "Exact head 3cb61ce730314aeecf2849dc12ab239383aab596 against dev base fad57ea3253024983f29183acefaee59328d0d01 passed all three required hosted jobs in run 45192426932 and received an independent ChatGPT approval limited to the scoped implementation. This documentation-only follow-up requires its own exact-head CI and review."
+        },
+        {
+          "sha256": "7d6d03bbe819add61d1ab2ab549a2fb15a372a27e0bb5f66ba6e9daf8c28c94f",
+          "reviewer": "Codex (Stage 05 item 5.15 review-evidence cleanup)",
+          "observations": "Reviewed the source-health evidence and browser request-settlement cleanup. Documentation distinguishes the scoped source-health implementation from outstanding system monitoring, alerting, source suspension and owner-acceptance requirements. The browser helper and diagnostics share the same recognized route-prefetch path list.",
+          "evidence": "Exact head 3cb61ce730314aeecf2849dc12ab239383aab596 passed required CI run 45192426932 and received independent approval. Exact head 76b9a14170f19f7cb323408c23ec70ead991ec75 passed all required CI jobs in run 45198233746 and received independent approval. The current change centralizes the known-route list and reconciles the historical evidence; its exact-head CI/review are tracked on PR #105."
         }
       ]
     },
@@ -2846,14 +3160,14 @@
     {
       "path": "docs/requirements/OWNER-ROADMAP-TRACEABILITY.json",
       "category": "documentation",
-      "reviewMethod": "focused-content-review",
+      "reviewMethod": "prior full-file review plus current change-diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
-      "reviewer": "Codex (CareerScope owner item 5.13 review)",
-      "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90",
+      "observations": "Reviewed the source-health evidence and browser request-settlement cleanup. Documentation distinguishes the scoped source-health implementation from outstanding system monitoring, alerting, source suspension and owner-acceptance requirements. The browser helper and diagnostics share the same recognized route-prefetch path list.",
+      "evidence": "Exact head 3cb61ce730314aeecf2849dc12ab239383aab596 passed required CI run 45192426932 and received independent approval. Exact head 76b9a14170f19f7cb323408c23ec70ead991ec75 passed all required CI jobs in run 45198233746 and received independent approval. The current change centralizes the known-route list and reconciles the historical evidence; its exact-head CI/review are tracked on PR #105.",
+      "reviewer": "Codex (Stage 05 item 5.15 review-evidence cleanup)",
+      "sha256": "3b8f6272b921b46f38060c41e545d39845b9d52d76f88ff2070f5f5ec3d56113",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -2962,6 +3276,48 @@
           "sha256": "4e3eaccbcc98045302d00b8f01028076c50642cd48fa6418cd3f7969620043d6",
           "observations": "Reviewed canonical 5.08 and 5.09 records, evidence, gaps, and 328-item status totals.",
           "evidence": "Node 24 Docker: normalize.test.ts 73/73; providers TypeScript build passed; targeted ESLint and Prettier checks passed. Exact-head CI and independent review for this change remain pending."
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.13 review)",
+          "observations": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
+          "evidence": "Updated canonical item 5.13 status evidence and outstanding exact-head acceptance gap.",
+          "sha256": "ba3b3fab9a0b2355bd948cc55738f7da33e6a5e3f5522d260520101d719aed90"
+        },
+        {
+          "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
+          "evidence": "Runs 43978471041, 43980466911, 43982429916 and 43983664244 exposed browser assertion/selector issues. Current docs record those failures and the source-text-filter correction; exact-head CI remains pending.",
+          "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
+          "sha256": "4efa8af49678613db1c7eadc457ec676423a7cc72bcfdd4898cb0aa820915e5f"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
+          "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
+          "evidence": "Runs 43978471041, 43980466911, 43982429916 and 43983664244 exposed browser assertion and selector issues. Exact head 56981cb0f7053d6147ce5f8318ef2a6dd9ec4900 passed all required jobs in run 43984937809. Independent exact-SHA review remains pending; item 5.15 remains partial for operational monitoring/freshness gaps.",
+          "sha256": "a6c8907e441ad00cc51d0aefd942f738554365cdec5970632ef037c40fd2e2b5"
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+          "observations": "Reviewed evidence/test links and partial gap for item 5.15.",
+          "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+          "sha256": "da30f8fcb3d68a47a5a81417b4310ee3caddda4977de536ea9dc772c2c86d510"
+        },
+        {
+          "sha256": "f86894155bfc84e8ed854a52164a0bb1712bd0fd6e46d6a52747f5ede6a1b31f",
+          "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+          "observations": "Reviewed documentation stating source collection elapsed time and latest search-run timestamp while preserving partial status and pending gates.",
+          "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending."
+        },
+        {
+          "sha256": "de989aa4a41a30b2e4dbe2708e24975b6f1860a4d64a97d8ae2b619d1059bce1",
+          "reviewer": "Codex (Stage 05 item 5.15 CI evidence update)",
+          "observations": "Updated Stage 05.15 evidence to record exact-head CI while preserving the operational monitoring and owner-acceptance gaps.",
+          "evidence": "Exact head 16ad8cb4b29732733e4b595f08ba0a705c4ba59d passed all three required Node 24 hosted CI jobs in run 45190079618. Item 5.15 remains partial pending independent review, operational monitoring, and owner acceptance."
+        },
+        {
+          "sha256": "fb7a8c867904be3bd1b9dc224f92ce9d91d62aa9f362aafdae24937e7defb349",
+          "reviewer": "Codex (Stage 05 item 5.15 evidence reconciliation)",
+          "observations": "Reviewed the Stage 05 item 5.15 progress, gap, test and owner-traceability records. The records distinguish the exact-head CI and ChatGPT approval for the scoped historical reporting change from the incomplete full checklist item; system-wide operational telemetry, alerting, automated suspension and owner verification remain pending.",
+          "evidence": "Exact head 3cb61ce730314aeecf2849dc12ab239383aab596 against dev base fad57ea3253024983f29183acefaee59328d0d01 passed all three required hosted jobs in run 45192426932 and received an independent ChatGPT approval limited to the scoped implementation. This documentation-only follow-up requires its own exact-head CI and review."
         }
       ]
     },
@@ -2980,16 +3336,22 @@
           "remediation": "Item 1.02 records Hostinger, server backup and restore-only clauses as OUT_OF_SCOPE_OWNER under the owner-revised checklist, and the inventory checker enforces the non-blocking scope disposition."
         }
       ],
-      "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
-      "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
-      "sha256": "e1cbcfc6915a04f151d2cd8ad7d00cff6daa157f306e1d70b3c18ab06fd5eefd",
+      "observations": "Regenerated the V12 reconciliation from the updated source-health requirement inventory; remaining system-wide telemetry and automated suspension are still documented as gaps.",
+      "evidence": "node scripts/ci/check-requirements-inventory.mjs passes for 319 clauses; item 5.15 remains partial.",
+      "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+      "sha256": "80121ec9170cba8c25977221936d222e737b2059922d1f11bc91951e92125279",
       "history": [
         {
           "reviewer": "Codex (Stage 01 item 1.02)",
           "sha256": "e0d50641930a3ec732b9d784cbb76ef90e39046fadafeb817d0add061b020c9b",
           "observations": "Reviewed the regenerated report against the updated inventory. It records 319 clauses, 11 owner-scoped Hostinger/backup/restore exclusions, 153 in-scope launch-blocking gaps, and preserves release-engineering requirements. Generated-summary validation passes.",
           "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
+          "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
+          "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed.",
+          "sha256": "e1cbcfc6915a04f151d2cd8ad7d00cff6daa157f306e1d70b3c18ab06fd5eefd"
         }
       ]
     },
@@ -3000,16 +3362,22 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
-      "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
-      "sha256": "9dadebe8adc2049084505928f8856a70e6f4ee4bbaaf71534c33735c482539c2",
+      "observations": "Reviewed partial assessment and remaining system-wide monitoring and suspension gaps.",
+      "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+      "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+      "sha256": "e932930903bd067894da63c39d942872281d6db39311f3846a89c6481fd35311",
       "history": [
         {
           "reviewer": "Codex (Stage 03 item 3.12)",
           "sha256": "a13d7491ea60cefc4ca785aa5985f05fc8de8409dde6af6f67471ca5225d10b9",
           "observations": "Re-read the 319-clause inventory and checked all 11 owner-scoped exclusions plus mixed clauses retained in scope. Owner-scoped records are non-blocking with a rationale; backup portions of mixed clauses are excluded while other gaps remain. The pinned source digest and clause correspondence still pass. Re-reviewed the modified sections for owner item 3.12 (candidate availability and preferred contact). Legacy notice values, bounds, privacy and matching exclusion are covered by focused schema/core/matching/browser checks; exact-SHA hosted CI and independent review remain pending.",
           "evidence": "Stage 01 item 1.02 review on commit adc49246f4ef4047f0b93dbdf11fddc1ac56fe63; npm run requirements:check, npm run traceability:check, node --test scripts/ci/check-requirements-inventory.test.mjs (25/25), Prettier check, and git diff --check passed."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
+          "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
+          "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed.",
+          "sha256": "9dadebe8adc2049084505928f8856a70e6f4ee4bbaaf71534c33735c482539c2"
         }
       ]
     },
@@ -4136,20 +4504,26 @@
     {
       "path": "package.json",
       "category": "repository-configuration",
-      "reviewMethod": "content-read",
+      "reviewMethod": "prior full-file review plus current change-diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
-      "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed.",
-      "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
-      "sha256": "7e588f96ae3e7b89fe8894a4dcc982e1f9ff9a8e33608140caf93e05a4f38dfa",
+      "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
+      "evidence": "Prior implementation SHA f9e6aebb2d7beca3044dae5301f2ca28400c27c2 passed hosted run 43970259059; documentation follow-up SHA 2fc990b8dda4fb6aeb03f14a5e86e27606a09737 passed run 43975092546. The new accepted-count and audit-history corrections require exact-head CI.",
+      "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
+      "sha256": "b6e1fc51a6737fbd70cdc6798ada315e3c4c336ccb2abc446c621f2e2cc0bce4",
       "history": [
         {
           "reviewer": "Codex (Stage 03 item 3.16)",
           "sha256": "6b71db79c2e0c943a5e51833a4703d66d01d1deae90b10101e9327b8efd8a373",
           "observations": "Reviewed the root test command delta: it registers the profile completeness node:test file in the explicit unit suite. No dependency or runtime command changed.",
           "evidence": "npm test passed 371 tests with 3 skips and no failures on the Stage 03 item 3.16 revision."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.07 review)",
+          "observations": "Reviewed current content for CareerScope item 5.07. The offline JSON-LD reader does not crawl or grant collection/display permission; inventory and progress retain outstanding authorization and coverage gaps.",
+          "evidence": "Node 24 domain suite passed 955/955 before final parser hardening; final focused tests passed 3/3. Provider build, targeted ESLint, traceability and audit checks passed.",
+          "sha256": "7e588f96ae3e7b89fe8894a4dcc982e1f9ff9a8e33608140caf93e05a4f38dfa"
         }
       ]
     },
@@ -4532,10 +4906,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Read in full (102 lines). Checked: strict collected-job schema; HTTPS-only public links without embedded credentials; match breakdown validated and strict; per-source outcome refinements tie failed to an error code and empty to zero accepted jobs; at most six sources with no repeats; collection status rule. No finding.",
-      "evidence": "",
-      "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
-      "sha256": "26044b3168e00eff840fd500e61081bf0951107b987373542526e09316e8bcce"
+      "observations": "Reviewed optional bounded duration schema; historical source outcomes remain parseable and denied calls may record null.",
+      "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+      "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+      "sha256": "b48de00806d5626bb8bf187b32bf89d622e99b2b4f79e4611857dd1b012506f7",
+      "history": [
+        {
+          "reviewer": "Claude (Stage 01 implementation agent, self-validation)",
+          "observations": "Read in full (102 lines). Checked: strict collected-job schema; HTTPS-only public links without embedded credentials; match breakdown validated and strict; per-source outcome refinements tie failed to an error code and empty to zero accepted jobs; at most six sources with no repeats; collection status rule. No finding.",
+          "evidence": "",
+          "sha256": "26044b3168e00eff840fd500e61081bf0951107b987373542526e09316e8bcce"
+        }
+      ]
     },
     {
       "path": "packages/core/src/leads.test.ts",
@@ -7389,7 +7771,7 @@
     {
       "path": "scripts/tests/check-ui.ts",
       "category": "tooling-and-tests",
-      "reviewMethod": "current exact-diff and durable outbox assertion review",
+      "reviewMethod": "prior full-file review plus current change-diff review",
       "state": "reviewed",
       "concerns": [],
       "findings": [
@@ -7415,10 +7797,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Reviewed both search-start browser assertions: the publisher can mark a command published before the UI test reads the pending-only queue. Both now query durable outbox records by search aggregate id and command type, then validate with commandSchema. Exact-head run 43173577319 passed the production image build; Quality gates failed on the stale test-file audit hash, and the browser job found the remaining four-source occurrence. The refreshed hash and second assertion fix are submitted for new hosted verification. Updated for Stage 04 item 4.10 deletion regression coverage; checklist acceptance remains pending. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending.",
-      "evidence": "On SHA 8a81ccf90e2be3314ae93cba5ed3fea97eec784d, run 43173577319 passed the image build, failed Quality gates because scripts/tests/check-ui.ts changed without a corresponding manifest hash refresh, and failed browser acceptance at the four-source command lookup on line 4975. The new revision refreshes the audit hash and reads both durable search.collect events by aggregate id. New exact-head hosted CI and independent review remain pending.",
-      "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
-      "sha256": "a4cc328f963509454dad382298195ea1f0b3d4820730acc4006de8e6902ba8dd",
+      "observations": "Reviewed the source-health evidence and browser request-settlement cleanup. Documentation distinguishes the scoped source-health implementation from outstanding system monitoring, alerting, source suspension and owner-acceptance requirements. The browser helper and diagnostics share the same recognized route-prefetch path list.",
+      "evidence": "Exact head 3cb61ce730314aeecf2849dc12ab239383aab596 passed required CI run 45192426932 and received independent approval. Exact head 76b9a14170f19f7cb323408c23ec70ead991ec75 passed all required CI jobs in run 45198233746 and received independent approval. The current change centralizes the known-route list and reconciles the historical evidence; its exact-head CI/review are tracked on PR #105.",
+      "reviewer": "Codex (Stage 05 item 5.15 review-evidence cleanup)",
+      "sha256": "40306d543fdbd3f67a739aab0de2001c62381ce8c5912f0fb3967f5f16d6d5c5",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
@@ -7437,6 +7819,48 @@
           "evidence": "Source or documentation reviewed on codex/stage04-item410-resume-deletion; this hash pins current bytes and does not claim checklist completion.",
           "reviewer": "Codex (Stage 04 item 4.10 evidence update)",
           "sha256": "a4cc328f963509454dad382298195ea1f0b3d4820730acc4006de8e6902ba8dd"
+        },
+        {
+          "reviewer": "Codex (Stage 04 item 4.07 CI follow-up)",
+          "observations": "Reviewed both search-start browser assertions: the publisher can mark a command published before the UI test reads the pending-only queue. Both now query durable outbox records by search aggregate id and command type, then validate with commandSchema. Exact-head run 43173577319 passed the production image build; Quality gates failed on the stale test-file audit hash, and the browser job found the remaining four-source occurrence. The refreshed hash and second assertion fix are submitted for new hosted verification. Updated for Stage 04 item 4.10 deletion regression coverage; checklist acceptance remains pending. Updated for Stage 04 item 4.10 evidence; item acceptance remains pending.",
+          "evidence": "On SHA 8a81ccf90e2be3314ae93cba5ed3fea97eec784d, run 43173577319 passed the image build, failed Quality gates because scripts/tests/check-ui.ts changed without a corresponding manifest hash refresh, and failed browser acceptance at the four-source command lookup on line 4975. The new revision refreshes the audit hash and reads both durable search.collect events by aggregate id. New exact-head hosted CI and independent review remain pending.",
+          "sha256": "a4cc328f963509454dad382298195ea1f0b3d4820730acc4006de8e6902ba8dd"
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 05 item 5.15 review)",
+          "observations": "Reviewed CareerScope owner item 5.15 change, including the accepted-count UI and browser assertion, owner-scoped source outcomes, and explicit recorded-observation disclaimer. Live operational monitoring, freshness/latency and automated suspension remain open.",
+          "evidence": "Runs 43980466911 and 43982429916 failed on accepted-count browser assertions; 43983664244 exposed a row selector anchored before normalized whitespace. This revision uses a source-text filter, derives the expected count from owner API history, and includes rendered row text in assertion failures. Exact-head CI is pending.",
+          "sha256": "7fb0d82c6f22a3b685004b4f4d48e84a3ca07dd7e1d9aba5058920aa0329e0bb"
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+          "observations": "Reviewed browser fixture assertions against API duration data and visible latest elapsed-time output.",
+          "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+          "sha256": "b3a9da6c9b66c5e83e3650cec48fae241f7de47de14233d8247b574d38263949"
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+          "observations": "Reviewed browser fixture assertions for measured duration and search-run timestamp rendered from owner search history.",
+          "evidence": "Node 24 production build passed; full typecheck passed for 98 canonical test files; source-health and targeted worker outcome tests passed 4/4. Exact-head hosted CI and independent review for the updated changes are pending.",
+          "sha256": "2da60f9ff98c50c8301d73a2fb0550ade1da9648f17b678a7c5d8f26fcfe24e5"
+        },
+        {
+          "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+          "observations": "Reviewed browser source-health fixture assertions for accepted count, per-source elapsed duration from the API, and displayed search-run timestamp.",
+          "evidence": "Hosted run 44490187735 exposed stale manifest hashes after the commit formatter rewrote this file; updated active hashes preserve prior records. Updated-head CI pending.",
+          "sha256": "8ccae3a31c6040b88db0895e68daca857736351f911ba804e18ad0e36245bd6d"
+        },
+        {
+          "sha256": "cf720d865cb2997cfd5a3c81961c3ff5ec1f9a611215db4f548b83ebd2dd963e",
+          "reviewer": "Codex (CareerScope owner item 5.15 CI correction)",
+          "observations": "Reviewed source-health browser assertions. Timestamp matching now checks that at least one recent row is present and waits on its first match, avoiding strict-mode failure when the panel displays multiple rows.",
+          "evidence": "Exact-head run 44492306240 failed because the timestamp locator matched six visible rows. This correction retains a presence assertion and waits on the first result; exact-head CI and independent review remain pending."
+        },
+        {
+          "sha256": "1106e1085332650fd59d64986d2f0873a748d3314ce4bc6360f87e88ded5687d",
+          "reviewer": "Codex (Stage 05 item 5.15 browser CI correction)",
+          "observations": "Reviewed the cross-browser request-settlement helper and its UI integration. It excludes only GET fetches marked as Next.js router prefetches for known app routes after route navigation; ordinary requests, writes, unknown paths, and same-route prefetches remain in the settlement barrier.",
+          "evidence": "Run 45195768664 on head 6ecb410825fe13d333ba2361637b15068dfe226f passed quality and image jobs but failed Firefox browser acceptance because a marked GET /jobs route prefetch from route epoch 161 remained pending at epoch 179. The helper regression passes locally; exact-head CI after this correction remains pending."
         }
       ]
     },
@@ -7503,10 +7927,18 @@
           "remediation": "Replaced the path fixture with the synthetic candidate@example.test identity."
         }
       ],
-      "observations": "Re-reviewed complete tests after Stage 03 item 3.13 regression update. Cover route epochs, method/resource/engine/path allowlists, including prior-route Chromium search detail reads while current-route and non-Chromium requests remain strict; same-origin path normalization, dynamic/query redaction and fixed warning/failure categories. Replaced a personal-looking email path fixture with candidate@example.test. All 6 tests passed.",
-      "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "cb3ce3fd9bf8c860e4bb28a0598cf6dd28ae7ff6212fda6851f60f43896c61ed"
+      "observations": "Reviewed the cross-browser request-settlement helper and its UI integration. It excludes only GET fetches marked as Next.js router prefetches for known app routes after route navigation; ordinary requests, writes, unknown paths, and same-route prefetches remain in the settlement barrier.",
+      "evidence": "Run 45195768664 on head 6ecb410825fe13d333ba2361637b15068dfe226f passed quality and image jobs but failed Firefox browser acceptance because a marked GET /jobs route prefetch from route epoch 161 remained pending at epoch 179. The helper regression passes locally; exact-head CI after this correction remains pending.",
+      "reviewer": "Codex (Stage 05 item 5.15 browser CI correction)",
+      "sha256": "a41d63a68cd4360b71744595a2e6f80b5af9f66686300278f7d8b6c652d8eafd",
+      "history": [
+        {
+          "sha256": "cb3ce3fd9bf8c860e4bb28a0598cf6dd28ae7ff6212fda6851f60f43896c61ed",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "observations": "Re-reviewed complete tests after Stage 03 item 3.13 regression update. Cover route epochs, method/resource/engine/path allowlists, including prior-route Chromium search detail reads while current-route and non-Chromium requests remain strict; same-origin path normalization, dynamic/query redaction and fixed warning/failure categories. Replaced a personal-looking email path fixture with candidate@example.test. All 6 tests passed.",
+          "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes."
+        }
+      ]
     },
     {
       "path": "scripts/tests/ui-requests.ts",
@@ -7515,10 +7947,24 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Re-reviewed complete helper after Stage 03 item 3.13 regression update. It drops only stale GETs from prior route epochs for explicit same-origin API routes and Chromium fetch/script or the exact Next image optimizer path; current-route requests still block settlement. It normalizes same-origin diagnostic paths, redacts unknown/dynamic segments and strips query data; warning/error classifiers return fixed categories only. Focused route-epoch tests pass 6/6. No finding.",
-      "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "4d95c21eb0bbe1ca0139c7b3c262fbaa13ebad23d02b81d80a258271a1580e84"
+      "observations": "Reviewed the source-health evidence and browser request-settlement cleanup. Documentation distinguishes the scoped source-health implementation from outstanding system monitoring, alerting, source suspension and owner-acceptance requirements. The browser helper and diagnostics share the same recognized route-prefetch path list.",
+      "evidence": "Exact head 3cb61ce730314aeecf2849dc12ab239383aab596 passed required CI run 45192426932 and received independent approval. Exact head 76b9a14170f19f7cb323408c23ec70ead991ec75 passed all required CI jobs in run 45198233746 and received independent approval. The current change centralizes the known-route list and reconciles the historical evidence; its exact-head CI/review are tracked on PR #105.",
+      "reviewer": "Codex (Stage 05 item 5.15 review-evidence cleanup)",
+      "sha256": "583f6de672ac9f399cbba7b1fc916b217cd5c5f18eab7e1b119bc2679af17cb4",
+      "history": [
+        {
+          "sha256": "4d95c21eb0bbe1ca0139c7b3c262fbaa13ebad23d02b81d80a258271a1580e84",
+          "reviewer": "Codex (Stage 01 item 1.01)",
+          "observations": "Re-reviewed complete helper after Stage 03 item 3.13 regression update. It drops only stale GETs from prior route epochs for explicit same-origin API routes and Chromium fetch/script or the exact Next image optimizer path; current-route requests still block settlement. It normalizes same-origin diagnostic paths, redacts unknown/dynamic segments and strips query data; warning/error classifiers return fixed categories only. Focused route-epoch tests pass 6/6. No finding.",
+          "evidence": "Re-reviewed current source on codex/stage03-item-313-postmerge-browser-fix; focused tests passed; SHA-256 records reviewed bytes."
+        },
+        {
+          "sha256": "cc1cf2888e04358a79091c49b5363ea1ca162fe494d915bc328233f94b823020",
+          "reviewer": "Codex (Stage 05 item 5.15 browser CI correction)",
+          "observations": "Reviewed the cross-browser request-settlement helper and its UI integration. It excludes only GET fetches marked as Next.js router prefetches for known app routes after route navigation; ordinary requests, writes, unknown paths, and same-route prefetches remain in the settlement barrier.",
+          "evidence": "Run 45195768664 on head 6ecb410825fe13d333ba2361637b15068dfe226f passed quality and image jobs but failed Firefox browser acceptance because a marked GET /jobs route prefetch from route epoch 161 remained pending at epoch 179. The helper regression passes locally; exact-head CI after this correction remains pending."
+        }
+      ]
     },
     {
       "path": "scripts/tests/visual-baselines/sign-in-desktop.png",
@@ -7575,10 +8021,18 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed migration fixture and persistence assertions for resume version metadata.",
-      "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
-      "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
-      "sha256": "b0edc933184e36519e769294c25b3e43ab0972ef123cc797f0c653d0fdb0656f"
+      "observations": "Reviewed current source duration change and regression assertion; prior audit history is preserved.",
+      "evidence": "Exact-head run 44490477511: quality gate failed formatting under locked Prettier 3.9.9 after local formatter-version drift; services suite found partial search outcome assertion missing the additive durationMs field. Corrected with locked formatter and regression assertion; new exact-head CI pending.",
+      "reviewer": "Codex (CareerScope owner item 5.15 latency update)",
+      "sha256": "542932a1f3987014d2b08503fdfd39bfa03a96e2fe382abb7c16a671f165d678",
+      "history": [
+        {
+          "reviewer": "Codex (CareerScope item 4.07 implementation audit)",
+          "observations": "Reviewed migration fixture and persistence assertions for resume version metadata.",
+          "evidence": "Current worktree bytes reviewed on codex/stage04-item407-multiple-versions; relevant local checks are recorded in the item implementation report.",
+          "sha256": "b0edc933184e36519e769294c25b3e43ab0972ef123cc797f0c653d0fdb0656f"
+        }
+      ]
     },
     {
       "path": "tests/integration/migrations.integration.test.ts",

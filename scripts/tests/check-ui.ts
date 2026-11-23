@@ -31,11 +31,13 @@ import { collect } from '../../apps/workers/search/src/collect.js';
 import { createRemoteOkProvider, type JobProvider } from '@careerscope/providers';
 import { selectUiBrowsers } from './ui-browsers.js';
 import {
+  NEXT_APP_ROUTE_PREFETCH_PATHS,
   browserRequestFailureCategory,
   browserWarningCategory,
   browserWarningPaths,
   sameOriginBrowserPath,
   staleEarlierRouteRead,
+  staleNextRoutePrefetch,
   staleSavedRead,
   staleSearchRead,
 } from './ui-requests.js';
@@ -1429,20 +1431,19 @@ try {
               routeEpoch,
               engine,
               new URL(request.url()).pathname,
+            ) &&
+            !staleNextRoutePrefetch(
+              request.method(),
+              request.resourceType(),
+              epoch,
+              routeEpoch,
+              new URL(request.url()).pathname,
+              request.headers()['next-router-prefetch'] === '1',
             ),
         );
       const recentRequestEvents: string[] = [];
       const sharedRoutePrefetches: string[] = [];
-      const sharedRoutePaths = new Set([
-        '/dashboard',
-        '/jobs',
-        '/applications',
-        '/saved',
-        '/resume',
-        '/settings',
-        '/career-resources',
-        '/preparation',
-      ]);
+      const sharedRoutePaths = new Set<string>(NEXT_APP_ROUTE_PREFETCH_PATHS);
       const recordRequestEvent = (request: import('playwright').Request, event: string) => {
         const rawPath = new URL(request.url()).pathname;
         const path = rawPath
@@ -4987,12 +4988,26 @@ try {
         await database.completeCollection(
           fourCommand,
           fourFence,
-          [],
+          [
+            {
+              fingerprint: 'source-health-accepted-fixture',
+              sourceJobId: 'source-health-accepted-fixture',
+              title: 'Source Health Fixture Engineer',
+              company: 'Example Health Fixture',
+              location: 'Remote',
+              description: 'Synthetic browser fixture for accepted source outcome display.',
+              source: 'greenhouse',
+              sourceUrl: 'https://boards.greenhouse.io/example/jobs/accepted-fixture',
+              applyUrl: 'https://boards.greenhouse.io/example/jobs/accepted-fixture/apply',
+              postedAt: null,
+            },
+          ],
           fourRun!.request.sources.map((source) => ({
             source,
             status: 'completed',
-            accepted: 0,
+            accepted: source === 'greenhouse' ? 1 : 0,
             limited: false,
+            durationMs: source === 'greenhouse' ? 120 : 45,
             errorCode: null,
           })),
         ),
@@ -5013,6 +5028,65 @@ try {
       assert.equal(
         await page.getByRole('list', { name: 'Source outcomes' }).getByRole('listitem').count(),
         4,
+      );
+      const sourceHealthHeading = page.getByRole('heading', {
+        name: 'Recent source outcomes',
+        exact: true,
+      });
+      await sourceHealthHeading.waitFor();
+      const sourceHealthPanel = sourceHealthHeading.locator('xpath=..');
+      await sourceHealthPanel
+        .getByText(
+          'Based on your last 50 searches; this does not show live provider availability.',
+          { exact: true },
+        )
+        .waitFor();
+      for (const source of ['Greenhouse', 'Lever', 'Ashby', 'Workable'])
+        await sourceHealthPanel.getByText(source, { exact: true }).waitFor();
+      await sourceHealthPanel.getByText('Latest elapsed time: 120 ms', { exact: true }).waitFor();
+      const searchRunTimes = sourceHealthPanel.getByText(/Search run time:.*2026/);
+      assert.ok(
+        await searchRunTimes.count(),
+        'recent source outcomes should include run timestamps',
+      );
+      await searchRunTimes.first().waitFor();
+      const sourceHealthResponse = await page.request.get(`${origin}/api/searches`);
+      assert.equal(sourceHealthResponse.status(), 200);
+      const sourceHealthRuns = (await sourceHealthResponse.json()).items as Array<{
+        id: string;
+        sourceOutcomes?: Array<{
+          source: string;
+          accepted: number;
+          durationMs?: number | null;
+        }> | null;
+      }>;
+      const sourceHealthFixture = sourceHealthRuns.find((run) => run.id === fourId);
+      assert.ok(sourceHealthFixture, 'the newest source-health fixture is in owner search history');
+      assert.equal(
+        sourceHealthFixture.sourceOutcomes?.find((outcome) => outcome.source === 'greenhouse')
+          ?.accepted,
+        1,
+      );
+      assert.equal(
+        sourceHealthFixture.sourceOutcomes?.find((outcome) => outcome.source === 'greenhouse')
+          ?.durationMs,
+        120,
+      );
+      const expectedGreenhouseAccepted = sourceHealthRuns.reduce(
+        (total, run) =>
+          total +
+          (run.sourceOutcomes ?? [])
+            .filter((outcome) => outcome.source === 'greenhouse')
+            .reduce((accepted, outcome) => accepted + outcome.accepted, 0),
+        0,
+      );
+      const acceptedGreenhouseSource = sourceHealthPanel
+        .getByRole('listitem')
+        .filter({ hasText: 'Greenhouse' });
+      const acceptedGreenhouseText = await acceptedGreenhouseSource.innerText();
+      assert.ok(
+        acceptedGreenhouseText.includes(`Accepted: ${expectedGreenhouseAccepted}`),
+        `${engine}: expected Greenhouse accepted total ${expectedGreenhouseAccepted}; rendered row: ${acceptedGreenhouseText}`,
       );
       // ---------------------------------------------------------------
       // Forensic audit F-3: a link to a discovery run must open THAT run.
@@ -5492,6 +5566,14 @@ try {
                 routeEpoch,
                 engine,
                 url.pathname,
+              ) &&
+              !staleNextRoutePrefetch(
+                request.method(),
+                request.resourceType(),
+                epoch,
+                routeEpoch,
+                url.pathname,
+                request.headers()['next-router-prefetch'] === '1',
               )
             );
           })

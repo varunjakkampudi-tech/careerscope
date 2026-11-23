@@ -5,10 +5,11 @@ The machine-readable record at [STAGE-01-FILE-AUDIT.json](STAGE-01-FILE-AUDIT.js
 ## Baseline and current coverage
 
 - Audit baseline: `dev` at `8008736`, with 478 tracked files.
-- Current candidate checkpoint: 520 tracked files, all accounted for.
-- 451 files are reviewed; 69 are classified not applicable as source. There are no partially reviewed or unreviewed files.
+- Current candidate checkpoint: 522 tracked files, all accounted for.
+- 453 files are reviewed; 69 are classified not applicable as source. There are no partially reviewed or unreviewed files.
 - Finding disposition: 71 fixed, one accepted low-severity risk (S1-F014), zero open findings.
 - The 2026-11-08 refresh re-reviewed 25 stale or new records after the profile-picture merge. It is based on `origin/dev` SHA `2d468d7c23b1784fe42ca3d04b1488a9a69389d2`; candidate PR approval and exact-head CI are recorded in [PROGRESS](../PROGRESS.md).
+- The 2026-11-17 Stage 05 item 5.15 update preserves displaced base review records in history and refreshes hashes for changed files. The source-health implementation and documentation-only follow-up passed their respective hosted runs; the accepted-count UI correction and audit-history reconciliation require new exact-head CI.
 
 The full prompt-scoped audit was completed and independently approved at PR #18, exact commit `5fa4776b7fe4ddd9c604c0d7d7fcec596d3d8964`. The current manifest is refreshed against the latest `dev` source and strict complete-coverage CI gate. B-04 is resolved. All 15 owner Stage 01 checklist items are verified with no recorded gaps. Final cross-browser acceptance and the required engineering gates passed on closing merge commit `397025bdd43ae293a081e2728fadc67dafb62df1` in hosted run `42310969989`; Stage 01 is complete. The accepted low-severity S1-F014 risk remains recorded below.
 
