@@ -12,18 +12,34 @@ async function isValidResumeContent(content: ResumePdfDraft['content']) {
   return coreSchema.resumeDraftContentSchema.safeParse(content).success;
 }
 
-type PositionedPdfTextItem = { str: string; transform: number[]; width: number };
+type PositionedPdfTextItem = {
+  fontName: string;
+  str: string;
+  transform: number[];
+  width: number;
+};
 
-function isPositionedPdfTextItem(item: unknown): item is PositionedPdfTextItem {
+function isNonEmptyPdfTextItem(item: unknown): item is { str: string } {
   if (!item || typeof item !== 'object') return false;
   const candidate = item as Record<string, unknown>;
-  return (
-    typeof candidate.str === 'string' &&
+  return typeof candidate.str === 'string' && candidate.str.length > 0;
+}
+
+function assertPositionedPdfTextItem(item: unknown): PositionedPdfTextItem {
+  assert.ok(item && typeof item === 'object');
+  const candidate = item as Record<string, unknown>;
+  assert.equal(typeof candidate.fontName, 'string', 'nonempty text has a font style');
+  assert.ok(
     Array.isArray(candidate.transform) &&
-    candidate.transform.length >= 6 &&
-    candidate.transform.every((value) => typeof value === 'number') &&
-    typeof candidate.width === 'number'
+      candidate.transform.length >= 6 &&
+      candidate.transform.every((value) => typeof value === 'number' && Number.isFinite(value)),
+    'nonempty text has a finite six-value transform',
   );
+  assert.ok(
+    typeof candidate.width === 'number' && Number.isFinite(candidate.width),
+    'nonempty text has a finite width',
+  );
+  return candidate as PositionedPdfTextItem;
 }
 
 const draft: ResumePdfDraft = {
@@ -198,20 +214,31 @@ test('multi-page PDF text remains inside the A4 page bounds', async () => {
       const page = await document.getPage(pageNumber);
       const viewport = page.getViewport({ scale: 1 });
       const content = await page.getTextContent();
-      const positionedText = (content.items as unknown[]).filter(isPositionedPdfTextItem);
-      assert.ok(positionedText.length > 0, `page ${pageNumber} contains extracted text`);
+      const nonEmptyText = (content.items as unknown[]).filter(isNonEmptyPdfTextItem);
+      assert.ok(nonEmptyText.length > 0, `page ${pageNumber} contains extracted text`);
 
-      for (const item of positionedText) {
-        const c = item.transform[2]!;
-        const d = item.transform[3]!;
-        const x = item.transform[4]!;
-        const y = item.transform[5]!;
-        assert.ok([c, d, x, y, item.width].every(Number.isFinite));
-        const glyphHeight = Math.hypot(c, d);
-        const left = Math.min(x, x + item.width);
-        const right = Math.max(x, x + item.width);
-        const top = viewport.height - y - glyphHeight;
-        const bottom = viewport.height - y;
+      for (const textItem of nonEmptyText) {
+        const item = assertPositionedPdfTextItem(textItem);
+        const style = content.styles[item.fontName];
+        assert.ok(style, `page ${pageNumber} text has PDF.js font metrics: ${item.str}`);
+        assert.ok(
+          Number.isFinite(style.ascent) && Number.isFinite(style.descent),
+          `page ${pageNumber} text has finite ascent and descent metrics: ${item.str}`,
+        );
+        assert.equal(style.vertical, false, 'the generated resume uses horizontal text');
+
+        const [a, b, c, d, x, y] = item.transform;
+        assert.ok([a, b, c, d, x, y].every((value) => Number.isFinite(value)));
+        assert.ok(Math.abs(b!) < 0.001 && Math.abs(c!) < 0.001, 'text is not rotated');
+        assert.ok(d! > 0, 'text uses a positive vertical scale');
+        assert.ok(item.width >= 0, 'text width is nonnegative');
+        const left = Math.min(x!, x! + item.width);
+        const right = Math.max(x!, x! + item.width);
+        const baseline = viewport.height - y!;
+        const glyphHeight = d!;
+        const metricTolerance = 2;
+        const top = baseline - style.ascent * glyphHeight - metricTolerance;
+        const bottom = baseline - style.descent * glyphHeight + metricTolerance;
         assert.ok(
           left >= margin - 1,
           `page ${pageNumber} text starts inside the left safe margin: ${item.str}`,
@@ -222,11 +249,11 @@ test('multi-page PDF text remains inside the A4 page bounds', async () => {
         );
         assert.ok(
           top >= pageEdgePadding,
-          `page ${pageNumber} text is not clipped at the top edge: ${item.str}`,
+          `page ${pageNumber} text ascent stays within the top edge with a ${metricTolerance} pt font-metric tolerance: ${item.str}`,
         );
         assert.ok(
           bottom <= viewport.height - pageEdgePadding,
-          `page ${pageNumber} text is not clipped at the bottom edge: ${item.str}`,
+          `page ${pageNumber} text descent stays within the bottom edge with a ${metricTolerance} pt font-metric tolerance: ${item.str}`,
         );
       }
     }

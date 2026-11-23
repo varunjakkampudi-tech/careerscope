@@ -201,10 +201,10 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; hosted browser CI remains pending"],
       "findings": [],
-      "observations": "Reviewed the Stage 10.11 PDF geometry regression or its checklist evidence update; item remains partial pending exact-head validation, independent review, and owner verification.",
-      "evidence": "Focused PDF regression passed locally before documentation reconciliation; exact-head hosted CI and independent re-review remain pending.",
-      "reviewer": "Codex (Stage 10.11 PDF geometry regression)",
-      "sha256": "fe4299fe51e7ad65cab9396d7bfb3fe18daf42e645883e31a00799ad59a399f9",
+      "observations": "Reviewed the Stage 10.11 geometry correction or its corresponding checklist evidence update; all nonempty PDF text items are validated with PDF.js ascent/descent metrics. Exact-head CI and independent re-review remain pending.",
+      "evidence": "Focused PDF suite passed 6/6 and typecheck passed across 100 canonical test files before documentation reconciliation; exact-head CI and independent re-review remain pending.",
+      "reviewer": "Codex (Stage 10.11 geometry review correction)",
+      "sha256": "6217866e9f92bccc914ef17990b4e86759ecca24a706c4358afe5abcd3d3526c",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -228,6 +228,11 @@
           "reviewer": "Codex (Stage 10.11 PDF geometry regression)",
           "sha256": "fe4299fe51e7ad65cab9396d7bfb3fe18daf42e645883e31a00799ad59a399f9",
           "observations": "Reviewed the Stage 10.11 PDF geometry regression or its checklist evidence update; item remains partial pending exact-head validation, independent review, and owner verification."
+        },
+        {
+          "reviewer": "Codex (Stage 10.11 geometry review correction)",
+          "sha256": "6217866e9f92bccc914ef17990b4e86759ecca24a706c4358afe5abcd3d3526c",
+          "observations": "Reviewed the Stage 10.11 geometry correction or its corresponding checklist evidence update; all nonempty PDF text items are validated with PDF.js ascent/descent metrics. Exact-head CI and independent re-review remain pending."
         }
       ]
     },
@@ -2206,10 +2211,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the Stage 10.11 PDF geometry regression or its checklist evidence update; item remains partial pending exact-head validation, independent review, and owner verification.",
-      "evidence": "Focused PDF regression passed locally before documentation reconciliation; exact-head hosted CI and independent re-review remain pending.",
-      "reviewer": "Codex (Stage 10.11 PDF geometry regression)",
-      "sha256": "ea2b975d1d5d76d17c61e981a6423aeba92893a7e6af2d2e2417e723f1289f6e",
+      "observations": "Reviewed the Stage 10.11 geometry correction or its corresponding checklist evidence update; all nonempty PDF text items are validated with PDF.js ascent/descent metrics. Exact-head CI and independent re-review remain pending.",
+      "evidence": "Focused PDF suite passed 6/6 and typecheck passed across 100 canonical test files before documentation reconciliation; exact-head CI and independent re-review remain pending.",
+      "reviewer": "Codex (Stage 10.11 geometry review correction)",
+      "sha256": "c4746b34b458dc700c38617865558d1d1129e6b6fbab3addddae0c73d0e6c22c",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -2461,6 +2466,11 @@
           "reviewer": "Codex (Stage 10.11 PDF geometry regression)",
           "sha256": "ea2b975d1d5d76d17c61e981a6423aeba92893a7e6af2d2e2417e723f1289f6e",
           "observations": "Reviewed the Stage 10.11 PDF geometry regression or its checklist evidence update; item remains partial pending exact-head validation, independent review, and owner verification."
+        },
+        {
+          "reviewer": "Codex (Stage 10.11 geometry review correction)",
+          "sha256": "c4746b34b458dc700c38617865558d1d1129e6b6fbab3addddae0c73d0e6c22c",
+          "observations": "Reviewed the Stage 10.11 geometry correction or its corresponding checklist evidence update; all nonempty PDF text items are validated with PDF.js ascent/descent metrics. Exact-head CI and independent re-review remain pending."
         }
       ]
     },
@@ -2535,10 +2545,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed the Stage 10.11 PDF geometry regression or its checklist evidence update; item remains partial pending exact-head validation, independent review, and owner verification.",
-      "evidence": "Focused PDF regression passed locally before documentation reconciliation; exact-head hosted CI and independent re-review remain pending.",
-      "reviewer": "Codex (Stage 10.11 PDF geometry regression)",
-      "sha256": "5f14252991a9f172459a25b3a8cc32e50e32d852e230415a1c288f7cd3f22041",
+      "observations": "Reviewed the Stage 10.11 geometry correction or its corresponding checklist evidence update; all nonempty PDF text items are validated with PDF.js ascent/descent metrics. Exact-head CI and independent re-review remain pending.",
+      "evidence": "Focused PDF suite passed 6/6 and typecheck passed across 100 canonical test files before documentation reconciliation; exact-head CI and independent re-review remain pending.",
+      "reviewer": "Codex (Stage 10.11 geometry review correction)",
+      "sha256": "d78c6ce788471e0c8dcb97d73d941c24e931a80df20f997afb608e0d48efcf66",
       "history": [
         {
           "reviewer": "Codex (CareerScope Stage 10 review evidence reconciliation)",
@@ -2772,6 +2782,11 @@
           "reviewer": "Codex (Stage 10.11 PDF geometry regression)",
           "sha256": "5f14252991a9f172459a25b3a8cc32e50e32d852e230415a1c288f7cd3f22041",
           "observations": "Reviewed the Stage 10.11 PDF geometry regression or its checklist evidence update; item remains partial pending exact-head validation, independent review, and owner verification."
+        },
+        {
+          "reviewer": "Codex (Stage 10.11 geometry review correction)",
+          "sha256": "d78c6ce788471e0c8dcb97d73d941c24e931a80df20f997afb608e0d48efcf66",
+          "observations": "Reviewed the Stage 10.11 geometry correction or its corresponding checklist evidence update; all nonempty PDF text items are validated with PDF.js ascent/descent metrics. Exact-head CI and independent re-review remain pending."
         }
       ]
     },
@@ -2826,10 +2841,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the Stage 10.11 PDF geometry regression or its checklist evidence update; item remains partial pending exact-head validation, independent review, and owner verification.",
-      "evidence": "Focused PDF regression passed locally before documentation reconciliation; exact-head hosted CI and independent re-review remain pending.",
-      "reviewer": "Codex (Stage 10.11 PDF geometry regression)",
-      "sha256": "e548abf70d71c74d89fba44ca7b05bf910bb689aab06ae65180518c21b3c3a8f",
+      "observations": "Reviewed the Stage 10.11 geometry correction or its corresponding checklist evidence update; all nonempty PDF text items are validated with PDF.js ascent/descent metrics. Exact-head CI and independent re-review remain pending.",
+      "evidence": "Focused PDF suite passed 6/6 and typecheck passed across 100 canonical test files before documentation reconciliation; exact-head CI and independent re-review remain pending.",
+      "reviewer": "Codex (Stage 10.11 geometry review correction)",
+      "sha256": "7098b9c73182bce405c6a8c0de6d8629dc80fcf78ab11d4adf81b10fd2c5340e",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -3069,6 +3084,11 @@
           "reviewer": "Codex (Stage 10.11 PDF geometry regression)",
           "sha256": "e548abf70d71c74d89fba44ca7b05bf910bb689aab06ae65180518c21b3c3a8f",
           "observations": "Reviewed the Stage 10.11 PDF geometry regression or its checklist evidence update; item remains partial pending exact-head validation, independent review, and owner verification."
+        },
+        {
+          "reviewer": "Codex (Stage 10.11 geometry review correction)",
+          "sha256": "7098b9c73182bce405c6a8c0de6d8629dc80fcf78ab11d4adf81b10fd2c5340e",
+          "observations": "Reviewed the Stage 10.11 geometry correction or its corresponding checklist evidence update; all nonempty PDF text items are validated with PDF.js ascent/descent metrics. Exact-head CI and independent re-review remain pending."
         }
       ]
     },
@@ -3507,10 +3527,10 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed the Stage 10.11 PDF geometry regression or its checklist evidence update; item remains partial pending exact-head validation, independent review, and owner verification.",
-      "evidence": "Focused PDF regression passed locally before documentation reconciliation; exact-head hosted CI and independent re-review remain pending.",
-      "reviewer": "Codex (Stage 10.11 PDF geometry regression)",
-      "sha256": "e582204622f73abd2cf6b82d3a7d4c81d4b35cda161094da96dab167ea8d2df0",
+      "observations": "Reviewed the Stage 10.11 geometry correction or its corresponding checklist evidence update; all nonempty PDF text items are validated with PDF.js ascent/descent metrics. Exact-head CI and independent re-review remain pending.",
+      "evidence": "Focused PDF suite passed 6/6 and typecheck passed across 100 canonical test files before documentation reconciliation; exact-head CI and independent re-review remain pending.",
+      "reviewer": "Codex (Stage 10.11 geometry review correction)",
+      "sha256": "33a4aa1873681cd61a8dcc9d59ed522f71f2ca931d56bfe133a134d85eb3983d",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -3744,6 +3764,11 @@
           "reviewer": "Codex (Stage 10.11 PDF geometry regression)",
           "sha256": "e582204622f73abd2cf6b82d3a7d4c81d4b35cda161094da96dab167ea8d2df0",
           "observations": "Reviewed the Stage 10.11 PDF geometry regression or its checklist evidence update; item remains partial pending exact-head validation, independent review, and owner verification."
+        },
+        {
+          "reviewer": "Codex (Stage 10.11 geometry review correction)",
+          "sha256": "33a4aa1873681cd61a8dcc9d59ed522f71f2ca931d56bfe133a134d85eb3983d",
+          "observations": "Reviewed the Stage 10.11 geometry correction or its corresponding checklist evidence update; all nonempty PDF text items are validated with PDF.js ascent/descent metrics. Exact-head CI and independent re-review remain pending."
         }
       ]
     },
