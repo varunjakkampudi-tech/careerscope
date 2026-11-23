@@ -2161,10 +2161,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Consolidated unresolved Stage 10 provider/cost policy, ATS test-target, and manual accessibility/PDF acceptance gates without changing their status or claiming completion.",
-      "evidence": "Cross-checked Stage 10 checklist source, GAP-MATRIX, TEST-MATRIX, and owner roadmap traceability. Provider generation remains disabled and manual checks remain pending.",
-      "reviewer": "Codex (Stage 10 owner-action consolidation)",
-      "sha256": "eaefd9fd8a9b52647d5dfbd1b8635c5f34ed90cc43911451cc19a64c74c602a6"
+      "observations": "Cross-checked Stage 10.14 against V12 cost and quota controls. No provider adapter, tier plan, price schedule or super-admin alert route exists; the item remains partial and AI stays disabled.",
+      "evidence": "Canonical checklist specifies per-tier quotas, reserve/release, token usage, daily spend breaker and admin alert. Owner policy inputs are listed in BLOCKERS.md.",
+      "reviewer": "Codex (Stage 10.14 cost policy gap reconciliation)",
+      "sha256": "7792df63f30d61ac28f839c424848be2c17b37ddfe7e4c8e6adfc1b215427b8d"
     },
     {
       "path": "docs/DATA-MODEL.md",
@@ -2259,10 +2259,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reconciled Stage 10.15 status and exact-head evidence; item remains partial because model-output evaluation and owner verification remain open.",
-      "evidence": "Focused hosted Chromium browser and accessibility suite passed on SHA 8c9b7857039787564f578208c1e168c929842e83; independent review approved the test change.",
-      "reviewer": "Codex (CareerScope Stage 10.15 evidence update)",
-      "sha256": "d0f5259d9a6559905303289a1801d8cb595264097d7100dd26fbb748a3e32183",
+      "observations": "Cross-checked Stage 10.14 against V12 cost and quota controls. No provider adapter, tier plan, price schedule or super-admin alert route exists; the item remains partial and AI stays disabled.",
+      "evidence": "Canonical checklist specifies per-tier quotas, reserve/release, token usage, daily spend breaker and admin alert. Owner policy inputs are listed in BLOCKERS.md.",
+      "reviewer": "Codex (Stage 10.14 cost policy gap reconciliation)",
+      "sha256": "ffb8a7da8cd94628d2edb4ef3cca8e2ec99d47d54c3883aef00b2f2b10cae3bd",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -3608,10 +3608,10 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reconciled Stage 10.15 status and exact-head evidence; item remains partial because model-output evaluation and owner verification remain open.",
-      "evidence": "Focused hosted Chromium browser and accessibility suite passed on SHA 8c9b7857039787564f578208c1e168c929842e83; independent review approved the test change.",
-      "reviewer": "Codex (CareerScope Stage 10.15 evidence update)",
-      "sha256": "40d75967b36a5be9af19cec6a6bbfc113b4a7de55eed3266ec7f0ee67eed2030",
+      "observations": "Cross-checked Stage 10.14 against V12 cost and quota controls. No provider adapter, tier plan, price schedule or super-admin alert route exists; the item remains partial and AI stays disabled.",
+      "evidence": "Canonical checklist specifies per-tier quotas, reserve/release, token usage, daily spend breaker and admin alert. Owner policy inputs are listed in BLOCKERS.md.",
+      "reviewer": "Codex (Stage 10.14 cost policy gap reconciliation)",
+      "sha256": "fccfbeac048c8e76c9c28c777dcfd9b7fb70d52b01a6a69016b6df7a24c42bfd",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",

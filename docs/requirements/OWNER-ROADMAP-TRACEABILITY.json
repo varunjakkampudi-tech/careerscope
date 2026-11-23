@@ -2357,7 +2357,7 @@
       "evidence": ["docs/PROGRESS.md"],
       "tests": [],
       "externalEvidence": [],
-      "gap": "AI features are disabled so no model costs can accrue from them; configurable quotas, budgets, usage telemetry, and enforcement are not implemented.",
+      "gap": "AI generation is disabled. No provider/model pricing schedule, account-tier mapping, per-tier request/token ceilings, durable pre-call reservations/releases, usage accounting, daily spend circuit breaker, or administrator alert route exists. Owner must define these policies before any provider is enabled.",
       "scopeDisposition": "in-scope"
     },
     {
