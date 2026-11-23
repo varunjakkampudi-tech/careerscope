@@ -4224,6 +4224,16 @@
       "evidence": ""
     },
     {
+      "path": "migrations/meta/0007_snapshot.json",
+      "category": "generated-lockfile-or-snapshot",
+      "reviewMethod": "classification-only",
+      "state": "not-applicable-source",
+      "concerns": [],
+      "findings": [],
+      "observations": "Generated Drizzle snapshot for migration 0007; schema integrity is checked against schema.ts and migration integration tests.",
+      "evidence": ""
+    },
+    {
       "path": "migrations/meta/_journal.json",
       "category": "generated-lockfile-or-snapshot",
       "reviewMethod": "Focused implementation and test review",
