@@ -4230,10 +4230,12 @@ try {
       await persistedOrganizer.getByText('completed', { exact: true }).waitFor();
       const applicationStatus = applicationDetails.getByLabel('Status');
       await page.once('dialog', (dialog) => {
-        assert.match(dialog.message(), /scheduled follow-up reminder will also be cleared/i);
+        assert.match(dialog.message(), /Change status to "Rejected"/);
+        assert.doesNotMatch(dialog.message(), /follow-up reminder will also be cleared/i);
         void dialog.dismiss();
       });
-      await applicationStatus.selectOption('archived');
+      assert.equal(await applicationStatus.locator('option[value="archived"]').count(), 0);
+      await applicationStatus.selectOption('rejected');
       assert.equal(await applicationStatus.inputValue(), 'applied');
       assert.equal((await leadRepository.get(ownerId, leadId))?.status, 'applied');
       assert.ok((await leadRepository.get(ownerId, leadId))?.followUpAt);

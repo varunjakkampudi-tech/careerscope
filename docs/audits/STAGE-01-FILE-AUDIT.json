@@ -1845,9 +1845,9 @@
       "concerns": [],
       "findings": [],
       "observations": "Read in full. Documents owner-controlled candidate application records, candidate-reported evidence and timestamps, revision/history semantics, and the rule that opening a destination does not claim an application was submitted.",
-      "evidence": "Reviewed the reminder-clearing confirmation paths, cancellation regression, and corresponding documentation; SHA-256 records the reviewed bytes. Exact-head CI and owner review remain separate gates.",
+      "evidence": "Reviewed status selector scope, cancellation regression, archive-button disclosure, and supporting documentation; SHA-256 records the reviewed bytes. Exact-head CI and owner review remain separate gates.",
       "reviewer": "Codex (Stage 09 reminder confirmation correction)",
-      "sha256": "d1405244975b3f25c22f43bfc3424d327e4e11b7cb5e3d8eac09a97747a4b03f"
+      "sha256": "cb75e0ec55c0da338250ede41efa22408ebc10ae3f85e1951a62a5e67806a7cc"
     },
     {
       "path": "docs/ARCHITECTURE.md",
@@ -2001,9 +2001,9 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed current acknowledgement and follow-up reminder changes. Candidate-reported employer acknowledgements remain unverified; follow-up dates are displayed only when an application is opened.",
-      "evidence": "Reviewed the reminder-clearing confirmation paths, cancellation regression, and corresponding documentation; SHA-256 records the reviewed bytes. Exact-head CI and owner review remain separate gates.",
+      "evidence": "Reviewed status selector scope, cancellation regression, archive-button disclosure, and supporting documentation; SHA-256 records the reviewed bytes. Exact-head CI and owner review remain separate gates.",
       "reviewer": "Codex (Stage 09 reminder confirmation correction)",
-      "sha256": "1c49df977507e38335069a3de852ecae2ee206d74e4674dbc32442d617e2f2c1",
+      "sha256": "8b82d9082e9c822ed3f614652931777db75a42a1aa52434be03a7beede16bcc2",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2419,9 +2419,9 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed current acknowledgement and follow-up reminder changes. Candidate-reported employer acknowledgements remain unverified; follow-up dates are displayed only when an application is opened.",
-      "evidence": "Reviewed the reminder-clearing confirmation paths, cancellation regression, and corresponding documentation; SHA-256 records the reviewed bytes. Exact-head CI and owner review remain separate gates.",
+      "evidence": "Reviewed status selector scope, cancellation regression, archive-button disclosure, and supporting documentation; SHA-256 records the reviewed bytes. Exact-head CI and owner review remain separate gates.",
       "reviewer": "Codex (Stage 09 reminder confirmation correction)",
-      "sha256": "9d8302bce446f9e8bb0cd7b938a3aedc5f6a0f5d8a25c8ae490bf5a1d454f736",
+      "sha256": "d6fdc9c312065537e8cde6865b6b6f71c8cc0b5fbcf7fe27be55b3040b810c3f",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -7614,9 +7614,9 @@
         }
       ],
       "observations": "Reviewed the Stage 09 acknowledgement browser failure: changing a saved lead to applied removes it from the saved-screen status scope and intentionally deselects it. The browser journey now opens the same lead in the Applications screen before asserting application-only acknowledgement and follow-up controls.",
-      "evidence": "Reviewed the reminder-clearing confirmation paths, cancellation regression, and corresponding documentation; SHA-256 records the reviewed bytes. Exact-head CI and owner review remain separate gates.",
+      "evidence": "Reviewed status selector scope, cancellation regression, archive-button disclosure, and supporting documentation; SHA-256 records the reviewed bytes. Exact-head CI and owner review remain separate gates.",
       "reviewer": "Codex (Stage 09 reminder confirmation correction)",
-      "sha256": "c7eb751c44caf56e0e7b05e968fc51dc92faa4d155f5f1f6b2ebb31f82861c84",
+      "sha256": "11edb5250b2ce924672ddc005c86731c16446e18777be2fcb5af2fbac9dd98b1",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",
