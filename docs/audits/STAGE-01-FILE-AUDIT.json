@@ -2267,11 +2267,17 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Recorded exact-head quality and focused Chromium evidence for the three-case disabled-provider adversarial regression. Item 10.15 remains partial; live-model evaluation and owner verification remain open.",
-      "evidence": "Exact quality run 45183500343 and focused browser run 45183507303 succeeded at SHA b262e3ff1610da865130f1d0fe91c9e435728d06. Independent review approved the test corrections at that exact SHA. Focused browser skips and scope limits are stated in the matrix.",
-      "reviewer": "Codex (CareerScope Stage 10.15 exact-head evidence update)",
-      "sha256": "a1b17391654769682d3e34286f938ad1935ba04f1fd2a71dc15977e93ed1e63e",
+      "observations": "Reconciled the Stage 10.11 gap with the local synthetic one-page Greek/Cyrillic Chrome viewer smoke result; broader viewer and owner acceptance remain pending.",
+      "evidence": "Local manual Chrome built-in PDF viewer smoke check on a synthetic one-page resume displayed Greek and Cyrillic text. This is limited sample evidence; exact-head CI and owner verification remain separate.",
+      "reviewer": "Codex (Stage 10.11 native-viewer documentation reconciliation)",
+      "sha256": "4ebd21bb71d9e834bf6624651666c057b9ea6b1e4453399f00c500ab24773003",
       "history": [
+        {
+          "observations": "Recorded exact-head quality and focused Chromium evidence for the three-case disabled-provider adversarial regression. Item 10.15 remains partial; live-model evaluation and owner verification remain open.",
+          "evidence": "Exact quality run 45183500343 and focused browser run 45183507303 succeeded at SHA b262e3ff1610da865130f1d0fe91c9e435728d06. Independent review approved the test corrections at that exact SHA. Focused browser skips and scope limits are stated in the matrix.",
+          "reviewer": "Codex (CareerScope Stage 10.15 exact-head evidence update)",
+          "sha256": "a1b17391654769682d3e34286f938ad1935ba04f1fd2a71dc15977e93ed1e63e"
+        },
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
           "sha256": "bd5d5a0b80cfc140c634983da64529213332f7481f3a42e5ca5b215d0449b255",
@@ -2931,11 +2937,17 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reconciled Stage 10.15 status and exact-head evidence; item remains partial because model-output evaluation and owner verification remain open.",
-      "evidence": "Focused hosted Chromium browser and accessibility suite passed on SHA 8c9b7857039787564f578208c1e168c929842e83; independent review approved the test change.",
-      "reviewer": "Codex (CareerScope Stage 10.15 evidence update)",
-      "sha256": "67d62d2df59190c798daee6b90080df07218a2c8acfdf222f0b1a37fd09dad88",
+      "observations": "Recorded the local Chrome built-in PDF viewer smoke result and its limits; deterministic tests and owner acceptance remain separate.",
+      "evidence": "Local manual Chrome built-in PDF viewer smoke check on a synthetic one-page resume displayed Greek and Cyrillic text. This is limited sample evidence; exact-head CI and owner verification remain separate.",
+      "reviewer": "Codex (Stage 10.11 native-viewer documentation reconciliation)",
+      "sha256": "aec27318c51388b62562c108dd19f94fd743c49b16cac56a7330bdbc5b444380",
       "history": [
+        {
+          "observations": "Reconciled Stage 10.15 status and exact-head evidence; item remains partial because model-output evaluation and owner verification remain open.",
+          "evidence": "Focused hosted Chromium browser and accessibility suite passed on SHA 8c9b7857039787564f578208c1e168c929842e83; independent review approved the test change.",
+          "reviewer": "Codex (CareerScope Stage 10.15 evidence update)",
+          "sha256": "67d62d2df59190c798daee6b90080df07218a2c8acfdf222f0b1a37fd09dad88"
+        },
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
           "sha256": "58749cf75f42f31ab962ff42cfe3382e495c8b68f2ef4335eb7a94fcb25e210d",
@@ -3628,11 +3640,17 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Added exact-head quality, focused Chromium browser, and independent review evidence for Stage 10.15 while preserving partial status and recording skipped suites and remaining limitations.",
-      "evidence": "Roadmap traceability validation covers 328 items across 22 stages; exact-head quality run 45183500343 and focused browser run 45183507303 succeeded at SHA b262e3ff1610da865130f1d0fe91c9e435728d06.",
-      "reviewer": "Codex (CareerScope Stage 10.15 exact-head evidence update)",
-      "sha256": "80a92bd6a142ba9b166ccea73e6cfb3df31276b33a3d6c9e514bf9c03b253311",
+      "observations": "Updated Stage 10.11 with a bounded local Chrome built-in viewer observation; item remains partial pending broader coverage and owner verification.",
+      "evidence": "Local manual Chrome built-in PDF viewer smoke check on a synthetic one-page resume displayed Greek and Cyrillic text. This is limited sample evidence; exact-head CI and owner verification remain separate.",
+      "reviewer": "Codex (Stage 10.11 native-viewer documentation reconciliation)",
+      "sha256": "2504c1cca89fdb818e7797e5cda320e1fdbb5427f7651cb51288e037ac3802bf",
       "history": [
+        {
+          "observations": "Added exact-head quality, focused Chromium browser, and independent review evidence for Stage 10.15 while preserving partial status and recording skipped suites and remaining limitations.",
+          "evidence": "Roadmap traceability validation covers 328 items across 22 stages; exact-head quality run 45183500343 and focused browser run 45183507303 succeeded at SHA b262e3ff1610da865130f1d0fe91c9e435728d06.",
+          "reviewer": "Codex (CareerScope Stage 10.15 exact-head evidence update)",
+          "sha256": "80a92bd6a142ba9b166ccea73e6cfb3df31276b33a3d6c9e514bf9c03b253311"
+        },
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
           "sha256": "5fd8253b38e16b0cfd1bbc5656509ab23adb301d0074a6e175a55199235e3327",
