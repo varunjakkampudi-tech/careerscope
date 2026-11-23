@@ -2161,10 +2161,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed blocker status and made the resolved full-audit coverage statement count-independent; current coverage counts remain in the manifest and audit validation output. Follow-up item 2.05 review: inspected owner/legacy ID mapping and legal gate wording; records counsel-approved legal text and public HTTPS URLs remain outstanding.",
-      "evidence": "Content inspected and aligned to the current file audit on codex/stage01-closeout-acceptance; SHA-256 records the reviewed bytes. Additional focused item 2.05 documentation review; SHA-256 records current bytes.",
-      "reviewer": "Codex (Stage 01 closeout)",
-      "sha256": "10f198095caa1372d2447db323e2f39420d534b7696c9f28a30d13b929e2402e"
+      "observations": "Consolidated unresolved Stage 10 provider/cost policy, ATS test-target, and manual accessibility/PDF acceptance gates without changing their status or claiming completion.",
+      "evidence": "Cross-checked Stage 10 checklist source, GAP-MATRIX, TEST-MATRIX, and owner roadmap traceability. Provider generation remains disabled and manual checks remain pending.",
+      "reviewer": "Codex (Stage 10 owner-action consolidation)",
+      "sha256": "eaefd9fd8a9b52647d5dfbd1b8635c5f34ed90cc43911451cc19a64c74c602a6"
     },
     {
       "path": "docs/DATA-MODEL.md",
