@@ -2211,10 +2211,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reconciled final Stage 10.11 evidence to corrected exact head f063df844cf23b292341f017bf5997f92ba354a4, successful exact-head CI run 45133065368 attempt 2, and independent approval. Owner acceptance and PDF native/cross-browser limitations remain open.",
-      "evidence": "Corrected head f063df844cf23b292341f017bf5997f92ba354a4 passed required CI run 45133065368 on attempt 2 and received independent exact-SHA approval.",
-      "reviewer": "Codex (Stage 10.11 geometry review closeout)",
-      "sha256": "0cff1fb35564da9d4ba1a38be61773400798c0b55fda0a37945a90d65df53cdc",
+      "observations": "Compared the Stage 10.02 inventory entry with the original owner roadmap attachment. The source row names Resume builder and does not require source-resume linkage; removed that unsupported gap. Owner verification remains pending.",
+      "evidence": "Original owner roadmap attachment SHA-256 427aa3fd646d1b27c535d6765411bda924755d1dfc8dae14980d73d03b056045; Stage 10.02 source row compared directly.",
+      "reviewer": "Codex (Stage 10.02 checklist scope correction)",
+      "sha256": "fcd22ea694513bc020f80cf13baf8fa60354c9fed893075e0f8f14c58f9a7bb7",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -3542,10 +3542,10 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reconciled final Stage 10.11 evidence to corrected exact head f063df844cf23b292341f017bf5997f92ba354a4, successful exact-head CI run 45133065368 attempt 2, and independent approval. Owner acceptance and PDF native/cross-browser limitations remain open.",
-      "evidence": "Corrected head f063df844cf23b292341f017bf5997f92ba354a4 passed required CI run 45133065368 on attempt 2 and received independent exact-SHA approval.",
-      "reviewer": "Codex (Stage 10.11 geometry review closeout)",
-      "sha256": "0b7ad069d0ed4a2521d7a289fab0ce262daa2dd4b45ca3f123baf9efa6596e84",
+      "observations": "Compared the Stage 10.02 inventory entry with the original owner roadmap attachment. The source row names Resume builder and does not require source-resume linkage; removed that unsupported gap. Owner verification remains pending.",
+      "evidence": "Original owner roadmap attachment SHA-256 427aa3fd646d1b27c535d6765411bda924755d1dfc8dae14980d73d03b056045; Stage 10.02 source row compared directly.",
+      "reviewer": "Codex (Stage 10.02 checklist scope correction)",
+      "sha256": "d101a47117bdc5ed333e1d52300e521e04774ea19576aa31158e886acda3b81c",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
