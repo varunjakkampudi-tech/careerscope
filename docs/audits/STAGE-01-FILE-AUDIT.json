@@ -2211,10 +2211,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the Stage 10.11 geometry correction or its corresponding checklist evidence update; all nonempty PDF text items are validated with PDF.js ascent/descent metrics. Exact-head CI and independent re-review remain pending.",
-      "evidence": "Focused PDF suite passed 6/6 and typecheck passed across 100 canonical test files before documentation reconciliation; exact-head CI and independent re-review remain pending.",
-      "reviewer": "Codex (Stage 10.11 geometry review correction)",
-      "sha256": "c4746b34b458dc700c38617865558d1d1129e6b6fbab3addddae0c73d0e6c22c",
+      "observations": "Reconciled final Stage 10.11 evidence to corrected exact head f063df844cf23b292341f017bf5997f92ba354a4, successful exact-head CI run 45133065368 attempt 2, and independent approval. Owner acceptance and PDF native/cross-browser limitations remain open.",
+      "evidence": "Corrected head f063df844cf23b292341f017bf5997f92ba354a4 passed required CI run 45133065368 on attempt 2 and received independent exact-SHA approval.",
+      "reviewer": "Codex (Stage 10.11 geometry review closeout)",
+      "sha256": "0cff1fb35564da9d4ba1a38be61773400798c0b55fda0a37945a90d65df53cdc",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -2471,6 +2471,11 @@
           "reviewer": "Codex (Stage 10.11 geometry review correction)",
           "sha256": "c4746b34b458dc700c38617865558d1d1129e6b6fbab3addddae0c73d0e6c22c",
           "observations": "Reviewed the Stage 10.11 geometry correction or its corresponding checklist evidence update; all nonempty PDF text items are validated with PDF.js ascent/descent metrics. Exact-head CI and independent re-review remain pending."
+        },
+        {
+          "reviewer": "Codex (Stage 10.11 geometry review closeout)",
+          "sha256": "0cff1fb35564da9d4ba1a38be61773400798c0b55fda0a37945a90d65df53cdc",
+          "observations": "Reconciled final Stage 10.11 evidence to corrected exact head f063df844cf23b292341f017bf5997f92ba354a4, successful exact-head CI run 45133065368 attempt 2, and independent approval. Owner acceptance and PDF native/cross-browser limitations remain open."
         }
       ]
     },
@@ -2545,10 +2550,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Reviewed the Stage 10.11 geometry correction or its corresponding checklist evidence update; all nonempty PDF text items are validated with PDF.js ascent/descent metrics. Exact-head CI and independent re-review remain pending.",
-      "evidence": "Focused PDF suite passed 6/6 and typecheck passed across 100 canonical test files before documentation reconciliation; exact-head CI and independent re-review remain pending.",
-      "reviewer": "Codex (Stage 10.11 geometry review correction)",
-      "sha256": "d78c6ce788471e0c8dcb97d73d941c24e931a80df20f997afb608e0d48efcf66",
+      "observations": "Reconciled final Stage 10.11 evidence to corrected exact head f063df844cf23b292341f017bf5997f92ba354a4, successful exact-head CI run 45133065368 attempt 2, and independent approval. Owner acceptance and PDF native/cross-browser limitations remain open.",
+      "evidence": "Corrected head f063df844cf23b292341f017bf5997f92ba354a4 passed required CI run 45133065368 on attempt 2 and received independent exact-SHA approval.",
+      "reviewer": "Codex (Stage 10.11 geometry review closeout)",
+      "sha256": "7c50ddaffbfc87c2bc1423eb35bd0b28637886bf3738a2c444a5224862baf732",
       "history": [
         {
           "reviewer": "Codex (CareerScope Stage 10 review evidence reconciliation)",
@@ -2787,6 +2792,11 @@
           "reviewer": "Codex (Stage 10.11 geometry review correction)",
           "sha256": "d78c6ce788471e0c8dcb97d73d941c24e931a80df20f997afb608e0d48efcf66",
           "observations": "Reviewed the Stage 10.11 geometry correction or its corresponding checklist evidence update; all nonempty PDF text items are validated with PDF.js ascent/descent metrics. Exact-head CI and independent re-review remain pending."
+        },
+        {
+          "reviewer": "Codex (Stage 10.11 geometry review closeout)",
+          "sha256": "7c50ddaffbfc87c2bc1423eb35bd0b28637886bf3738a2c444a5224862baf732",
+          "observations": "Reconciled final Stage 10.11 evidence to corrected exact head f063df844cf23b292341f017bf5997f92ba354a4, successful exact-head CI run 45133065368 attempt 2, and independent approval. Owner acceptance and PDF native/cross-browser limitations remain open."
         }
       ]
     },
@@ -2841,10 +2851,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the Stage 10.11 geometry correction or its corresponding checklist evidence update; all nonempty PDF text items are validated with PDF.js ascent/descent metrics. Exact-head CI and independent re-review remain pending.",
-      "evidence": "Focused PDF suite passed 6/6 and typecheck passed across 100 canonical test files before documentation reconciliation; exact-head CI and independent re-review remain pending.",
-      "reviewer": "Codex (Stage 10.11 geometry review correction)",
-      "sha256": "7098b9c73182bce405c6a8c0de6d8629dc80fcf78ab11d4adf81b10fd2c5340e",
+      "observations": "Reconciled final Stage 10.11 evidence to corrected exact head f063df844cf23b292341f017bf5997f92ba354a4, successful exact-head CI run 45133065368 attempt 2, and independent approval. Owner acceptance and PDF native/cross-browser limitations remain open.",
+      "evidence": "Corrected head f063df844cf23b292341f017bf5997f92ba354a4 passed required CI run 45133065368 on attempt 2 and received independent exact-SHA approval.",
+      "reviewer": "Codex (Stage 10.11 geometry review closeout)",
+      "sha256": "2f501f607fc1d4f2e5c5093c90388bbd7eafe3028ef8b453c71e06fcef288e1a",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -3089,6 +3099,11 @@
           "reviewer": "Codex (Stage 10.11 geometry review correction)",
           "sha256": "7098b9c73182bce405c6a8c0de6d8629dc80fcf78ab11d4adf81b10fd2c5340e",
           "observations": "Reviewed the Stage 10.11 geometry correction or its corresponding checklist evidence update; all nonempty PDF text items are validated with PDF.js ascent/descent metrics. Exact-head CI and independent re-review remain pending."
+        },
+        {
+          "reviewer": "Codex (Stage 10.11 geometry review closeout)",
+          "sha256": "2f501f607fc1d4f2e5c5093c90388bbd7eafe3028ef8b453c71e06fcef288e1a",
+          "observations": "Reconciled final Stage 10.11 evidence to corrected exact head f063df844cf23b292341f017bf5997f92ba354a4, successful exact-head CI run 45133065368 attempt 2, and independent approval. Owner acceptance and PDF native/cross-browser limitations remain open."
         }
       ]
     },
@@ -3527,10 +3542,10 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Reviewed the Stage 10.11 geometry correction or its corresponding checklist evidence update; all nonempty PDF text items are validated with PDF.js ascent/descent metrics. Exact-head CI and independent re-review remain pending.",
-      "evidence": "Focused PDF suite passed 6/6 and typecheck passed across 100 canonical test files before documentation reconciliation; exact-head CI and independent re-review remain pending.",
-      "reviewer": "Codex (Stage 10.11 geometry review correction)",
-      "sha256": "33a4aa1873681cd61a8dcc9d59ed522f71f2ca931d56bfe133a134d85eb3983d",
+      "observations": "Reconciled final Stage 10.11 evidence to corrected exact head f063df844cf23b292341f017bf5997f92ba354a4, successful exact-head CI run 45133065368 attempt 2, and independent approval. Owner acceptance and PDF native/cross-browser limitations remain open.",
+      "evidence": "Corrected head f063df844cf23b292341f017bf5997f92ba354a4 passed required CI run 45133065368 on attempt 2 and received independent exact-SHA approval.",
+      "reviewer": "Codex (Stage 10.11 geometry review closeout)",
+      "sha256": "0b7ad069d0ed4a2521d7a289fab0ce262daa2dd4b45ca3f123baf9efa6596e84",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -3769,6 +3784,11 @@
           "reviewer": "Codex (Stage 10.11 geometry review correction)",
           "sha256": "33a4aa1873681cd61a8dcc9d59ed522f71f2ca931d56bfe133a134d85eb3983d",
           "observations": "Reviewed the Stage 10.11 geometry correction or its corresponding checklist evidence update; all nonempty PDF text items are validated with PDF.js ascent/descent metrics. Exact-head CI and independent re-review remain pending."
+        },
+        {
+          "reviewer": "Codex (Stage 10.11 geometry review closeout)",
+          "sha256": "0b7ad069d0ed4a2521d7a289fab0ce262daa2dd4b45ca3f123baf9efa6596e84",
+          "observations": "Reconciled final Stage 10.11 evidence to corrected exact head f063df844cf23b292341f017bf5997f92ba354a4, successful exact-head CI run 45133065368 attempt 2, and independent approval. Owner acceptance and PDF native/cross-browser limitations remain open."
         }
       ]
     },
