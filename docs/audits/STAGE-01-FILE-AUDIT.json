@@ -201,10 +201,10 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; hosted browser CI remains pending"],
       "findings": [],
-      "observations": "Reviewed the current source or evidence update for apps/web/src/lib/resume-pdf.test.ts; reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
-      "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision.",
-      "reviewer": "Codex (Stage 10.11 independent-review corrections)",
-      "sha256": "cfc19c481514b6915c50fbb9128f7dc6dab026563a56221ecc91a07f5f597874",
+      "observations": "Reviewed the Stage 10.11 PDF geometry regression or its checklist evidence update; item remains partial pending exact-head validation, independent review, and owner verification.",
+      "evidence": "Focused PDF regression passed locally before documentation reconciliation; exact-head hosted CI and independent re-review remain pending.",
+      "reviewer": "Codex (Stage 10.11 PDF geometry regression)",
+      "sha256": "fe4299fe51e7ad65cab9396d7bfb3fe18daf42e645883e31a00799ad59a399f9",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -223,6 +223,11 @@
           "sha256": "d6596d2735c79d69a5bd510c75c6807524b8ee54d53887255f4a7ab4350b2bf6",
           "observations": "Added unit coverage for WinAnsi/unsupported-script behavior, role-specific metadata, sanitized filenames, A4 page geometry, and pagination.",
           "evidence": "Focused PDF tests pass 3/3; full unit suite passes 390 with 3 skipped. Exact-head browser CI pending."
+        },
+        {
+          "reviewer": "Codex (Stage 10.11 PDF geometry regression)",
+          "sha256": "fe4299fe51e7ad65cab9396d7bfb3fe18daf42e645883e31a00799ad59a399f9",
+          "observations": "Reviewed the Stage 10.11 PDF geometry regression or its checklist evidence update; item remains partial pending exact-head validation, independent review, and owner verification."
         }
       ]
     },
@@ -737,10 +742,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed the current source or evidence update for apps/web/package.json; reconciled schema-valid multi-page PDF tests, page-boundary heading coverage, and WinAnsi text extraction checks.",
-      "evidence": "Focused PDF tests and local type/lint/format/traceability gates; exact-head hosted CI and independent re-review are pending for this revision.",
-      "reviewer": "Codex (Stage 10.11 independent-review corrections)",
-      "sha256": "7f4d43d5276cc1506bb84b117fdbf187529e112f1b6d2340fdc9ac35cad45279",
+      "observations": "Reviewed the Stage 10.11 PDF geometry regression or its checklist evidence update; item remains partial pending exact-head validation, independent review, and owner verification.",
+      "evidence": "Focused PDF regression passed locally before documentation reconciliation; exact-head hosted CI and independent re-review remain pending.",
+      "reviewer": "Codex (Stage 10.11 PDF geometry regression)",
+      "sha256": "6d2d8f54b7c914959047cb7150a25dbdfdc15944c7db47726115c9ef1868a215",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -765,6 +770,11 @@
           "sha256": "2db03d12aa411e5d29177cb2fde52ee189f49547f7bd01abddb92d70e26e7e82",
           "observations": "Reviewed the full web manifest after aligning Next.js and eslint-config-next at 16.4.5; existing build, lint, React pins and private workspace settings remain explicit.",
           "evidence": "Stage 01 checklist item 1.03 review on codex/stage01-item-103-dependency-validation, based on dev f93be64; the manifest SHA-256 records the inspected bytes."
+        },
+        {
+          "reviewer": "Codex (Stage 10.11 PDF geometry regression)",
+          "sha256": "6d2d8f54b7c914959047cb7150a25dbdfdc15944c7db47726115c9ef1868a215",
+          "observations": "Reviewed the Stage 10.11 PDF geometry regression or its checklist evidence update; item remains partial pending exact-head validation, independent review, and owner verification."
         }
       ]
     },
@@ -2196,10 +2206,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated docs/GAP-MATRIX.md to distinguish exact-head CI and independent engineering approval from remaining owner/product acceptance.",
-      "evidence": "Recorded exact head 505f28703fe694f07ed2b4fe8197ed02f3a28671, required CI run 45125280732, and independent exact-SHA engineering approval. Broader Unicode, native/cross-browser acceptance, and owner verification remain open.",
-      "reviewer": "Codex (CareerScope Stage 10 exact-head evidence reconciliation)",
-      "sha256": "486eebb1d17e43c37c923072c97072ee8349fa2af7820700f3b4054bc392e89d",
+      "observations": "Reviewed the Stage 10.11 PDF geometry regression or its checklist evidence update; item remains partial pending exact-head validation, independent review, and owner verification.",
+      "evidence": "Focused PDF regression passed locally before documentation reconciliation; exact-head hosted CI and independent re-review remain pending.",
+      "reviewer": "Codex (Stage 10.11 PDF geometry regression)",
+      "sha256": "ea2b975d1d5d76d17c61e981a6423aeba92893a7e6af2d2e2417e723f1289f6e",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -2446,6 +2456,11 @@
           "sha256": "5328c6c796318fc595e9891f25dad792549a292acfe366160aac6dd127c10b99",
           "observations": "Stage 10.08/10.09 evidence reconciled with responsive, accessibility, comparison-removal, and print assertions. Both items remain partial pending owner verification; manual screen-reader acceptance is not evidenced for 10.08.",
           "evidence": "Code head 2e1f9f2e602af83f3109a5ad80e0f8882edde8aa passed focused browser run 45047562375 and all three required PR jobs in run 45047568483. Exact independent review dispositions and remaining owner gates are recorded in the owner roadmap inventory."
+        },
+        {
+          "reviewer": "Codex (Stage 10.11 PDF geometry regression)",
+          "sha256": "ea2b975d1d5d76d17c61e981a6423aeba92893a7e6af2d2e2417e723f1289f6e",
+          "observations": "Reviewed the Stage 10.11 PDF geometry regression or its checklist evidence update; item remains partial pending exact-head validation, independent review, and owner verification."
         }
       ]
     },
@@ -2520,10 +2535,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Updated docs/PROGRESS.md to distinguish exact-head CI and independent engineering approval from remaining owner/product acceptance.",
-      "evidence": "Reconciled Stage 10.11 current exact-head CI and independent review evidence; item 10.11 and Stage 10 remain partial pending owner verification.",
-      "reviewer": "Codex (CareerScope Stage 10 exact-head evidence reconciliation)",
-      "sha256": "f785904c3d0a64940bd5343195d61c5636cba2719b3ee063d045bb53e756a726",
+      "observations": "Reviewed the Stage 10.11 PDF geometry regression or its checklist evidence update; item remains partial pending exact-head validation, independent review, and owner verification.",
+      "evidence": "Focused PDF regression passed locally before documentation reconciliation; exact-head hosted CI and independent re-review remain pending.",
+      "reviewer": "Codex (Stage 10.11 PDF geometry regression)",
+      "sha256": "5f14252991a9f172459a25b3a8cc32e50e32d852e230415a1c288f7cd3f22041",
       "history": [
         {
           "reviewer": "Codex (CareerScope Stage 10 review evidence reconciliation)",
@@ -2752,6 +2767,11 @@
           "sha256": "a7e9c60fb466776f6d06126c7b7a09e2a78f1e1103db2f1fb28cb6e27d2c209b",
           "observations": "Reviewed and reconciled Stage 10.06 evidence after corrected exact-head CI and scoped independent approval. Cross-field skill fragments remain unmatched; explicit React Query remains recognized. Item stays partial pending owner verification.",
           "evidence": "Focused skill tests 5/5; typecheck covers 100 canonical tests. Exact head 0f3e307c908ced6ed1569982012c2e73ca8d2d36 passed all required CI in run 45040662036; independent review approved only item 10.06."
+        },
+        {
+          "reviewer": "Codex (Stage 10.11 PDF geometry regression)",
+          "sha256": "5f14252991a9f172459a25b3a8cc32e50e32d852e230415a1c288f7cd3f22041",
+          "observations": "Reviewed the Stage 10.11 PDF geometry regression or its checklist evidence update; item remains partial pending exact-head validation, independent review, and owner verification."
         }
       ]
     },
@@ -2806,10 +2826,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Updated docs/TEST-MATRIX.md to distinguish exact-head CI and independent engineering approval from remaining owner/product acceptance.",
-      "evidence": "Recorded exact-head CI and independent review approval for 10.11; broader font coverage, native/cross-browser acceptance, and owner verification remain open.",
-      "reviewer": "Codex (CareerScope Stage 10 exact-head evidence reconciliation)",
-      "sha256": "948226178f84c4e86b0b177c5f3c83dd2233b09c3464e8662ae52a4672d3d543",
+      "observations": "Reviewed the Stage 10.11 PDF geometry regression or its checklist evidence update; item remains partial pending exact-head validation, independent review, and owner verification.",
+      "evidence": "Focused PDF regression passed locally before documentation reconciliation; exact-head hosted CI and independent re-review remain pending.",
+      "reviewer": "Codex (Stage 10.11 PDF geometry regression)",
+      "sha256": "e548abf70d71c74d89fba44ca7b05bf910bb689aab06ae65180518c21b3c3a8f",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -3044,6 +3064,11 @@
           "sha256": "4c668bdc9f090463f8bddf358287c07b3433e53b5cc924a67ed067bb20180fd8",
           "observations": "Stage 10.08/10.09 evidence reconciled with responsive, accessibility, comparison-removal, and print assertions. Both items remain partial pending owner verification; manual screen-reader acceptance is not evidenced for 10.08.",
           "evidence": "Code head 2e1f9f2e602af83f3109a5ad80e0f8882edde8aa passed focused browser run 45047562375 and all three required PR jobs in run 45047568483. Exact independent review dispositions and remaining owner gates are recorded in the owner roadmap inventory."
+        },
+        {
+          "reviewer": "Codex (Stage 10.11 PDF geometry regression)",
+          "sha256": "e548abf70d71c74d89fba44ca7b05bf910bb689aab06ae65180518c21b3c3a8f",
+          "observations": "Reviewed the Stage 10.11 PDF geometry regression or its checklist evidence update; item remains partial pending exact-head validation, independent review, and owner verification."
         }
       ]
     },
@@ -3482,10 +3507,10 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Updated docs/requirements/OWNER-ROADMAP-TRACEABILITY.json to distinguish exact-head CI and independent engineering approval from remaining owner/product acceptance.",
-      "evidence": "Recorded exact head 505f28703fe694f07ed2b4fe8197ed02f3a28671, required CI run 45125280732, and independent exact-SHA engineering approval while retaining remaining acceptance gaps.",
-      "reviewer": "Codex (CareerScope Stage 10 exact-head evidence reconciliation)",
-      "sha256": "78fd76fc7636b5e885981e7e40700104a8dc5c361638bb6e54f5f6b2e953383a",
+      "observations": "Reviewed the Stage 10.11 PDF geometry regression or its checklist evidence update; item remains partial pending exact-head validation, independent review, and owner verification.",
+      "evidence": "Focused PDF regression passed locally before documentation reconciliation; exact-head hosted CI and independent re-review remain pending.",
+      "reviewer": "Codex (Stage 10.11 PDF geometry regression)",
+      "sha256": "e582204622f73abd2cf6b82d3a7d4c81d4b35cda161094da96dab167ea8d2df0",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -3714,6 +3739,11 @@
           "sha256": "1c255555001f197d7cfa1861eb1a7b5cc96132c6ea38f0d5b5af16ec3c8d9e51",
           "observations": "Reviewed and reconciled Stage 10.06 evidence after corrected exact-head CI and scoped independent approval. Cross-field skill fragments remain unmatched; explicit React Query remains recognized. Item stays partial pending owner verification.",
           "evidence": "Focused skill tests 5/5; typecheck covers 100 canonical tests. Exact head 0f3e307c908ced6ed1569982012c2e73ca8d2d36 passed all required CI in run 45040662036; independent review approved only item 10.06."
+        },
+        {
+          "reviewer": "Codex (Stage 10.11 PDF geometry regression)",
+          "sha256": "e582204622f73abd2cf6b82d3a7d4c81d4b35cda161094da96dab167ea8d2df0",
+          "observations": "Reviewed the Stage 10.11 PDF geometry regression or its checklist evidence update; item remains partial pending exact-head validation, independent review, and owner verification."
         }
       ]
     },

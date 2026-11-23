@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { resolve } from 'node:path';
+import { resolve, sep } from 'node:path';
 import test from 'node:test';
 import { pathToFileURL } from 'node:url';
 import { PDFParse } from 'pdf-parse';
@@ -10,6 +10,20 @@ async function isValidResumeContent(content: ResumePdfDraft['content']) {
     pathToFileURL(resolve(process.cwd(), 'packages/core/dist/resume-drafts.js')).href
   );
   return coreSchema.resumeDraftContentSchema.safeParse(content).success;
+}
+
+type PositionedPdfTextItem = { str: string; transform: number[]; width: number };
+
+function isPositionedPdfTextItem(item: unknown): item is PositionedPdfTextItem {
+  if (!item || typeof item !== 'object') return false;
+  const candidate = item as Record<string, unknown>;
+  return (
+    typeof candidate.str === 'string' &&
+    Array.isArray(candidate.transform) &&
+    candidate.transform.length >= 6 &&
+    candidate.transform.every((value) => typeof value === 'number') &&
+    typeof candidate.width === 'number'
+  );
 }
 
 const draft: ResumePdfDraft = {
@@ -139,6 +153,85 @@ test('direct PDF export paginates a schema-valid candidate-authored resume', asy
     assert.match(result.pages.at(-1)!.text, /Final Page University/);
   } finally {
     await parser.destroy();
+  }
+});
+
+test('multi-page PDF text remains inside the A4 page bounds', async () => {
+  const longDraft: ResumePdfDraft = {
+    ...draft,
+    content: {
+      ...draft.content,
+      fullName: 'Candidate with a long work history',
+      summary: 'A candidate-authored profile within the supported summary limit.',
+      experience: Array.from({ length: 16 }, (_, experienceIndex) => ({
+        id: `layout-experience-${experienceIndex}`,
+        role: `Role ${experienceIndex}`,
+        company: `Company ${experienceIndex}`,
+        location: 'London',
+        startDate: '2020-01',
+        endDate: null,
+        bullets: Array.from({ length: 8 }, (_, bulletIndex) =>
+          `Candidate-authored achievement ${experienceIndex * 8 + bulletIndex} with measurable results. `.repeat(
+            4,
+          ),
+        ),
+      })),
+    },
+  };
+  assert.equal(await isValidResumeContent(longDraft.content), true);
+
+  const { blob } = createResumePdf(longDraft);
+  const pdfjs = await import(
+    pathToFileURL(resolve(process.cwd(), 'node_modules/pdfjs-dist/legacy/build/pdf.mjs')).href
+  );
+  const standardFontDataUrl = `${resolve(process.cwd(), 'node_modules/pdfjs-dist/standard_fonts').replaceAll(sep, '/')}/`;
+  const document = await pdfjs.getDocument({
+    data: new Uint8Array(await blob.arrayBuffer()),
+    standardFontDataUrl,
+  }).promise;
+  const pointPerMillimeter = 72 / 25.4;
+  const margin = 16 * pointPerMillimeter;
+  const pageEdgePadding = 10;
+  try {
+    assert.ok(document.numPages > 1);
+    for (let pageNumber = 1; pageNumber <= document.numPages; pageNumber += 1) {
+      const page = await document.getPage(pageNumber);
+      const viewport = page.getViewport({ scale: 1 });
+      const content = await page.getTextContent();
+      const positionedText = (content.items as unknown[]).filter(isPositionedPdfTextItem);
+      assert.ok(positionedText.length > 0, `page ${pageNumber} contains extracted text`);
+
+      for (const item of positionedText) {
+        const c = item.transform[2]!;
+        const d = item.transform[3]!;
+        const x = item.transform[4]!;
+        const y = item.transform[5]!;
+        assert.ok([c, d, x, y, item.width].every(Number.isFinite));
+        const glyphHeight = Math.hypot(c, d);
+        const left = Math.min(x, x + item.width);
+        const right = Math.max(x, x + item.width);
+        const top = viewport.height - y - glyphHeight;
+        const bottom = viewport.height - y;
+        assert.ok(
+          left >= margin - 1,
+          `page ${pageNumber} text starts inside the left safe margin: ${item.str}`,
+        );
+        assert.ok(
+          right <= viewport.width - margin + 1,
+          `page ${pageNumber} text ends inside the right safe margin: ${item.str}`,
+        );
+        assert.ok(
+          top >= pageEdgePadding,
+          `page ${pageNumber} text is not clipped at the top edge: ${item.str}`,
+        );
+        assert.ok(
+          bottom <= viewport.height - pageEdgePadding,
+          `page ${pageNumber} text is not clipped at the bottom edge: ${item.str}`,
+        );
+      }
+    }
+  } finally {
+    await document.destroy();
   }
 });
 
