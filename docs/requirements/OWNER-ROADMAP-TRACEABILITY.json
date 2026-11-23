@@ -1807,7 +1807,7 @@
       ],
       "tests": ["apps/api/src/saved-searches.integration.test.ts", "scripts/tests/check-ui.ts"],
       "externalEvidence": [],
-      "gap": "Owner-scoped named searches can be saved, listed, rerun and deleted; request shape is validated, duplicate names are rejected case-insensitively, and a concurrency-safe cap of 25 is enforced. Local exact-head checks, hosted Node 24 CI, independent review, and owner acceptance remain pending. Saved searches do not imply scheduled execution or alerts.",
+      "gap": "Owner-scoped named searches can be saved, listed, rerun and deleted; request shape is validated, duplicate names are rejected case-insensitively, and a concurrency-safe cap of 25 is enforced. Exact head 83591f9bdd7617b51a4616350a8b722d605f2821 passed all required hosted Node 24 CI jobs in run 45187589945. Independent review and owner acceptance remain pending. Saved searches do not imply scheduled execution or alerts.",
       "scopeDisposition": "in-scope"
     },
     {

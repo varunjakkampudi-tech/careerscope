@@ -1965,10 +1965,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 08.04 saved-search behavior: owner-scoped configuration persistence, request validation, unique naming and cap, UI rerun/delete flow, migration constraints, and integration/browser assertions.",
-      "evidence": "Local Node 22.23.2 typecheck (99 canonical tests), lint, Drizzle migration check, requirement/roadmap traceability, and formatting passed. The isolated database integration and browser suite were not run locally because this worktree has no private service config and the available compose project is shared; exact-head Node 24 CI is pending.",
-      "reviewer": "Codex (CareerScope owner item 8.04 implementation review)",
-      "sha256": "455cb33c299bb47736b5dbb507358509171da745a341b545af008f6b32f7d2da",
+      "observations": "Updated Stage 08.04 evidence to record the generated migration snapshot and successful exact-head CI without claiming checklist completion.",
+      "evidence": "Exact head 83591f9bdd7617b51a4616350a8b722d605f2821 passed all three required Node 24 hosted CI jobs in run 45187589945. Item 8.04 remains partial pending independent review and owner acceptance.",
+      "reviewer": "Codex (Stage 08.04 CI evidence update)",
+      "sha256": "12d796d5e9bfcf1a8eb45e86971fe1723fdd201a613b08e7b959305c6fdd67bc",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2095,6 +2095,12 @@
           "sha256": "c1da30afc49df98eff48043d4cf1a3308261e8405c0a8d3e1acd31c28760c50d",
           "observations": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review.",
           "evidence": "Updated owner item 5.13 evidence and gaps for generation/failure-revision guards, 56/56 focused tests, and pending new exact-head CI/review."
+        },
+        {
+          "sha256": "455cb33c299bb47736b5dbb507358509171da745a341b545af008f6b32f7d2da",
+          "reviewer": "Codex (CareerScope owner item 8.04 implementation review)",
+          "observations": "Reviewed Stage 08.04 saved-search behavior: owner-scoped configuration persistence, request validation, unique naming and cap, UI rerun/delete flow, migration constraints, and integration/browser assertions.",
+          "evidence": "Local Node 22.23.2 typecheck (99 canonical tests), lint, Drizzle migration check, requirement/roadmap traceability, and formatting passed. The isolated database integration and browser suite were not run locally because this worktree has no private service config and the available compose project is shared; exact-head Node 24 CI is pending."
         }
       ]
     },
@@ -2365,10 +2371,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 08.04 saved-search behavior: owner-scoped configuration persistence, request validation, unique naming and cap, UI rerun/delete flow, migration constraints, and integration/browser assertions.",
-      "evidence": "Local Node 22.23.2 typecheck (99 canonical tests), lint, Drizzle migration check, requirement/roadmap traceability, and formatting passed. The isolated database integration and browser suite were not run locally because this worktree has no private service config and the available compose project is shared; exact-head Node 24 CI is pending.",
-      "reviewer": "Codex (CareerScope owner item 8.04 implementation review)",
-      "sha256": "f6d02ed5ca91044d0d9f2f2723f63f007786697217b11a563b7559af21687082",
+      "observations": "Updated Stage 08.04 test evidence to record the hosted exact-head result without claiming owner acceptance.",
+      "evidence": "Exact head 83591f9bdd7617b51a4616350a8b722d605f2821 passed all three required Node 24 hosted CI jobs in run 45187589945. Item 8.04 remains partial pending independent review and owner acceptance.",
+      "reviewer": "Codex (Stage 08.04 CI evidence update)",
+      "sha256": "efce5c535fcc3a9d1cad5e32757d97d4bf0aeec7d5a583ba4322effe32d7fb3e",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -2501,6 +2507,12 @@
           "sha256": "bc2dcbe130ca060969ea27f2b5e73f258b37a8b44a831a99a8ff810d9f8fc2b4",
           "observations": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases.",
           "evidence": "Updated item 5.13 regression coverage to 56/56, including stale completion and concurrent failure cases."
+        },
+        {
+          "sha256": "f6d02ed5ca91044d0d9f2f2723f63f007786697217b11a563b7559af21687082",
+          "reviewer": "Codex (CareerScope owner item 8.04 implementation review)",
+          "observations": "Reviewed Stage 08.04 saved-search behavior: owner-scoped configuration persistence, request validation, unique naming and cap, UI rerun/delete flow, migration constraints, and integration/browser assertions.",
+          "evidence": "Local Node 22.23.2 typecheck (99 canonical tests), lint, Drizzle migration check, requirement/roadmap traceability, and formatting passed. The isolated database integration and browser suite were not run locally because this worktree has no private service config and the available compose project is shared; exact-head Node 24 CI is pending."
         }
       ]
     },
@@ -2939,10 +2951,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reviewed Stage 08.04 saved-search behavior: owner-scoped configuration persistence, request validation, unique naming and cap, UI rerun/delete flow, migration constraints, and integration/browser assertions.",
-      "evidence": "Local Node 22.23.2 typecheck (99 canonical tests), lint, Drizzle migration check, requirement/roadmap traceability, and formatting passed. The isolated database integration and browser suite were not run locally because this worktree has no private service config and the available compose project is shared; exact-head Node 24 CI is pending.",
-      "reviewer": "Codex (CareerScope owner item 8.04 implementation review)",
-      "sha256": "bbfc40d6ea8a0ea472be7149457f2e4568a8e0985b3e940033cb16d21bb177d3",
+      "observations": "Updated Stage 08.04 evidence to record the generated migration snapshot and successful exact-head CI without claiming checklist completion.",
+      "evidence": "Exact head 83591f9bdd7617b51a4616350a8b722d605f2821 passed all three required Node 24 hosted CI jobs in run 45187589945. Item 8.04 remains partial pending independent review and owner acceptance.",
+      "reviewer": "Codex (Stage 08.04 CI evidence update)",
+      "sha256": "30a8ae966e188cbf9a036bfbbcba57e36d6f573b13074c94493f02068f72463e",
       "history": [
         {
           "observations": "Reviewed 4.07 evidence and test links; item remains partial pending exact-head CI, independent review and post-merge verification.",
@@ -3061,6 +3073,12 @@
         {
           "reviewer": "Codex (CareerScope owner item 8.04 implementation review)",
           "sha256": "e2f7970f2394a8fea80e82c397b9d09b1c2d7257a00a8e0c88ea502749c52ece",
+          "observations": "Reviewed Stage 08.04 saved-search behavior: owner-scoped configuration persistence, request validation, unique naming and cap, UI rerun/delete flow, migration constraints, and integration/browser assertions.",
+          "evidence": "Local Node 22.23.2 typecheck (99 canonical tests), lint, Drizzle migration check, requirement/roadmap traceability, and formatting passed. The isolated database integration and browser suite were not run locally because this worktree has no private service config and the available compose project is shared; exact-head Node 24 CI is pending."
+        },
+        {
+          "sha256": "bbfc40d6ea8a0ea472be7149457f2e4568a8e0985b3e940033cb16d21bb177d3",
+          "reviewer": "Codex (CareerScope owner item 8.04 implementation review)",
           "observations": "Reviewed Stage 08.04 saved-search behavior: owner-scoped configuration persistence, request validation, unique naming and cap, UI rerun/delete flow, migration constraints, and integration/browser assertions.",
           "evidence": "Local Node 22.23.2 typecheck (99 canonical tests), lint, Drizzle migration check, requirement/roadmap traceability, and formatting passed. The isolated database integration and browser suite were not run locally because this worktree has no private service config and the available compose project is shared; exact-head Node 24 CI is pending."
         }
