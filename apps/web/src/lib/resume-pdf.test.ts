@@ -3,7 +3,15 @@ import { resolve, sep } from 'node:path';
 import test from 'node:test';
 import { pathToFileURL } from 'node:url';
 import { PDFParse } from 'pdf-parse';
-import { createResumePdf, supportsDirectResumePdf, type ResumePdfDraft } from './resume-pdf.js';
+import {
+  createResumePdf,
+  hasEmbeddedFontGlyphs,
+  isSupportedWithEmbeddedFontGlyphs,
+  needsEmbeddedResumePdfFont,
+  supportsDirectResumePdf,
+  type ResumePdfDraft,
+} from './resume-pdf.js';
+import { readFile } from 'node:fs/promises';
 
 async function isValidResumeContent(content: ResumePdfDraft['content']) {
   const coreSchema = await import(
@@ -86,6 +94,70 @@ test('direct PDF export accepts Western Latin text and declines unsupported scri
     supportsDirectResumePdf({ ...draft, content: { ...draft.content, fullName: 'తెలుగు పేరు' } }),
     false,
   );
+  assert.equal(
+    supportsDirectResumePdf({ ...draft, content: { ...draft.content, fullName: 'Αλέξανδρος' } }),
+    true,
+  );
+  assert.equal(
+    supportsDirectResumePdf({ ...draft, content: { ...draft.content, fullName: 'Ирина' } }),
+    true,
+  );
+  assert.equal(
+    needsEmbeddedResumePdfFont({ ...draft, content: { ...draft.content, fullName: 'Ирина' } }),
+    true,
+  );
+  assert.equal(
+    supportsDirectResumePdf({ ...draft, content: { ...draft.content, fullName: '漢字' } }),
+    false,
+  );
+});
+
+test('embedded PDF font preserves Greek and Cyrillic in extracted resume text', async () => {
+  const fontDirectory = resolve(process.cwd(), 'apps/web/public/fonts');
+  const fonts = {
+    regular: (await readFile(resolve(fontDirectory, 'NotoSans-Regular-subset.ttf'))).toString(
+      'base64',
+    ),
+    bold: (await readFile(resolve(fontDirectory, 'NotoSans-Bold-subset.ttf'))).toString('base64'),
+  };
+  const multilingualDraft: ResumePdfDraft = {
+    ...draft,
+    content: {
+      ...draft.content,
+      fullName: 'Αλέξανδρος Иванова',
+      summary: 'Ανάπτυξη λογισμικού και разработка ПО.',
+    },
+  };
+  const { blob } = createResumePdf(multilingualDraft, fonts);
+  assert.equal(hasEmbeddedFontGlyphs(multilingualDraft, fonts.regular), true);
+  assert.equal(isSupportedWithEmbeddedFontGlyphs(multilingualDraft, fonts.regular), true);
+  const parser = new PDFParse({ data: new Uint8Array(await blob.arrayBuffer()) });
+  try {
+    const extracted = (await parser.getText()).text;
+    assert.match(extracted, /Αλέξανδρος Иванова/);
+    assert.match(extracted, /Ανάπτυξη λογισμικού και разработка ПО/);
+  } finally {
+    await parser.destroy();
+  }
+});
+
+test('embedded PDF font refuses an unmapped codepoint before generating output', async () => {
+  const fontDirectory = resolve(process.cwd(), 'apps/web/public/fonts');
+  const fonts = {
+    regular: (await readFile(resolve(fontDirectory, 'NotoSans-Regular-subset.ttf'))).toString(
+      'base64',
+    ),
+    bold: (await readFile(resolve(fontDirectory, 'NotoSans-Bold-subset.ttf'))).toString('base64'),
+  };
+  const unsupportedDraft = {
+    ...draft,
+    content: { ...draft.content, fullName: 'Αλέξανδρος漢' },
+  };
+  assert.equal(hasEmbeddedFontGlyphs(unsupportedDraft, fonts.regular), false);
+  assert.equal(isSupportedWithEmbeddedFontGlyphs(unsupportedDraft, fonts.regular), false);
+  assert.throws(() => createResumePdf(unsupportedDraft, fonts), {
+    name: 'UnsupportedResumePdfTextError',
+  });
 });
 
 test('direct PDF export carries role-specific metadata, a sanitized filename, and an A4 page', async () => {

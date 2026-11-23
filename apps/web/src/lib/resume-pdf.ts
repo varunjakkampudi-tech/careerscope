@@ -2,6 +2,7 @@ import { jsPDF } from 'jspdf';
 import type { ResumeDraft } from './api-schemas';
 
 export type ResumePdfDraft = Pick<ResumeDraft, 'title' | 'targetRole' | 'template' | 'content'>;
+export type ResumePdfFonts = { regular: string; bold: string };
 
 const WIN_ANSI_EXTRA = new Set([
   0x0192, 0x02c6, 0x02dc, 0x0152, 0x0153, 0x0160, 0x0161, 0x0178, 0x017d, 0x017e, 0x20ac, 0x2013,
@@ -28,6 +29,10 @@ function isSupportedPdfCharacter(character: string) {
     (codePoint >= 0xa0 && codePoint <= 0xff) ||
     WIN_ANSI_EXTRA.has(codePoint)
   );
+}
+
+function needsEmbeddedFont(character: string) {
+  return !isSupportedPdfCharacter(character);
 }
 
 function collectResumeText(draft: ResumePdfDraft) {
@@ -57,10 +62,84 @@ function collectResumeText(draft: ResumePdfDraft) {
   ];
 }
 
+function isSupportedByEmbeddedFont(codePoint: number) {
+  return (
+    (codePoint >= 0x0100 && codePoint <= 0x024f) ||
+    (codePoint >= 0x0300 && codePoint <= 0x0377) ||
+    (codePoint >= 0x037a && codePoint <= 0x037f) ||
+    (codePoint >= 0x0384 && codePoint <= 0x038a) ||
+    codePoint === 0x038c ||
+    (codePoint >= 0x038e && codePoint <= 0x03a1) ||
+    (codePoint >= 0x03a3 && codePoint <= 0x03e1) ||
+    (codePoint >= 0x03f0 && codePoint <= 0x052f) ||
+    (codePoint >= 0x1c80 && codePoint <= 0x1c88) ||
+    (codePoint >= 0x1f00 && codePoint <= 0x1f15) ||
+    (codePoint >= 0x1f18 && codePoint <= 0x1f1d) ||
+    (codePoint >= 0x1f20 && codePoint <= 0x1f45) ||
+    (codePoint >= 0x1f48 && codePoint <= 0x1f4d) ||
+    (codePoint >= 0x1f50 && codePoint <= 0x1f57) ||
+    codePoint === 0x1f59 ||
+    codePoint === 0x1f5b ||
+    codePoint === 0x1f5d ||
+    (codePoint >= 0x1f5f && codePoint <= 0x1f7d) ||
+    (codePoint >= 0x1f80 && codePoint <= 0x1fb4) ||
+    (codePoint >= 0x1fb6 && codePoint <= 0x1fc4) ||
+    (codePoint >= 0x1fc6 && codePoint <= 0x1fd3) ||
+    (codePoint >= 0x1fd6 && codePoint <= 0x1fdb) ||
+    (codePoint >= 0x1fdd && codePoint <= 0x1fef) ||
+    (codePoint >= 0x1ff2 && codePoint <= 0x1ff4) ||
+    (codePoint >= 0x1ff6 && codePoint <= 0x1ffe) ||
+    (codePoint >= 0x2000 && codePoint <= 0x2064) ||
+    (codePoint >= 0x2066 && codePoint <= 0x206f) ||
+    (codePoint >= 0x20a0 && codePoint <= 0x20c0) ||
+    (codePoint >= 0x2100 && codePoint <= 0x215f) ||
+    (codePoint >= 0x2183 && codePoint <= 0x2184) ||
+    codePoint === 0x2189 ||
+    codePoint === 0x2212 ||
+    (codePoint >= 0x2de0 && codePoint <= 0x2dff) ||
+    (codePoint >= 0xa640 && codePoint <= 0xa69f)
+  );
+}
+
 export function supportsDirectResumePdf(draft: ResumePdfDraft) {
   return collectResumeText(draft).every((value) =>
-    Array.from(value).every(isSupportedPdfCharacter),
+    Array.from(value).every((character) => {
+      const codePoint = character.codePointAt(0)!;
+      return isSupportedPdfCharacter(character) || isSupportedByEmbeddedFont(codePoint);
+    }),
   );
+}
+
+export function hasEmbeddedFontGlyphs(draft: ResumePdfDraft, regularFontBase64: string) {
+  const pdf = new jsPDF({ putOnlyUsedFonts: true });
+  pdf.addFileToVFS('NotoSans-Regular.ttf', regularFontBase64);
+  pdf.addFont('NotoSans-Regular.ttf', 'Noto Sans', 'normal');
+  pdf.setFont('Noto Sans', 'normal');
+  const font = pdf.getFont();
+  const characterToGlyph = font.metadata.characterToGlyph as unknown as (
+    codePoint: number,
+  ) => number;
+  return collectResumeText(draft).every((value) =>
+    Array.from(value).every(
+      (character) =>
+        !needsEmbeddedFont(character) ||
+        characterToGlyph.call(font.metadata, character.codePointAt(0)!) !== 0,
+    ),
+  );
+}
+
+export function isSupportedWithEmbeddedFontGlyphs(
+  draft: ResumePdfDraft,
+  regularFontBase64: string,
+) {
+  return (
+    supportsDirectResumePdf(draft) &&
+    (!needsEmbeddedResumePdfFont(draft) || hasEmbeddedFontGlyphs(draft, regularFontBase64))
+  );
+}
+
+export function needsEmbeddedResumePdfFont(draft: ResumePdfDraft) {
+  return collectResumeText(draft).some((value) => Array.from(value).some(needsEmbeddedFont));
 }
 
 function fileName(draft: ResumePdfDraft) {
@@ -75,8 +154,11 @@ function fileName(draft: ResumePdfDraft) {
   return `${base || 'CareerScope Resume'}.pdf`;
 }
 
-export function createResumePdf(draft: ResumePdfDraft) {
+export function createResumePdf(draft: ResumePdfDraft, fonts?: ResumePdfFonts) {
   if (!supportsDirectResumePdf(draft)) throw new UnsupportedResumePdfTextError();
+
+  const usesEmbeddedFont = needsEmbeddedResumePdfFont(draft);
+  if (usesEmbeddedFont && !fonts) throw new UnsupportedResumePdfTextError();
 
   const pdf = new jsPDF({
     orientation: 'portrait',
@@ -84,6 +166,28 @@ export function createResumePdf(draft: ResumePdfDraft) {
     format: 'a4',
     putOnlyUsedFonts: true,
   });
+  if (usesEmbeddedFont) {
+    pdf.addFileToVFS('NotoSans-Regular.ttf', fonts!.regular);
+    pdf.addFileToVFS('NotoSans-Bold.ttf', fonts!.bold);
+    pdf.addFont('NotoSans-Regular.ttf', 'Noto Sans', 'normal');
+    pdf.addFont('NotoSans-Bold.ttf', 'Noto Sans', 'bold');
+    pdf.setFont('Noto Sans', 'normal');
+    const font = pdf.getFont();
+    const characterToGlyph = font.metadata.characterToGlyph as unknown as (
+      codePoint: number,
+    ) => number;
+    if (
+      !collectResumeText(draft).every((value) =>
+        Array.from(value).every(
+          (character) =>
+            !needsEmbeddedFont(character) ||
+            characterToGlyph.call(font.metadata, character.codePointAt(0)!) !== 0,
+        ),
+      )
+    )
+      throw new UnsupportedResumePdfTextError();
+  }
+  const fontFamily = usesEmbeddedFont ? 'Noto Sans' : 'helvetica';
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
   const margin = 16;
@@ -118,7 +222,7 @@ export function createResumePdf(draft: ResumePdfDraft) {
     } = {},
   ) => {
     const size = options.size ?? bodySize;
-    pdf.setFont('helvetica', options.bold ? 'bold' : 'normal');
+    pdf.setFont(fontFamily, options.bold ? 'bold' : 'normal');
     pdf.setFontSize(size);
     pdf.setTextColor(...(options.color ?? [30, 35, 40]));
     const indent = options.indent ?? 0;
@@ -136,7 +240,7 @@ export function createResumePdf(draft: ResumePdfDraft) {
     const firstLineHeight = firstEntry.trim() ? lineHeight : 0;
     addPageIfNeeded(headingHeight + firstLineHeight);
     y += compact ? 2 : 4;
-    pdf.setFont('helvetica', 'bold');
+    pdf.setFont(fontFamily, 'bold');
     pdf.setFontSize(compact ? 10 : 11);
     pdf.setTextColor(...accent);
     pdf.text(heading, margin, y);
@@ -147,7 +251,7 @@ export function createResumePdf(draft: ResumePdfDraft) {
     y += compact ? 4 : 5;
   };
 
-  pdf.setFont('helvetica', 'bold');
+  pdf.setFont(fontFamily, 'bold');
   pdf.setFontSize(compact ? 19 : 22);
   pdf.setTextColor(...accent);
   const nameLines = pdf.splitTextToSize(
@@ -217,7 +321,7 @@ export function createResumePdf(draft: ResumePdfDraft) {
   const pageCount = pdf.internal.pages.length - 1;
   for (let page = 1; page <= pageCount; page += 1) {
     pdf.setPage(page);
-    pdf.setFont('helvetica', 'normal');
+    pdf.setFont(fontFamily, 'normal');
     pdf.setFontSize(8);
     pdf.setTextColor(110, 116, 124);
     pdf.text(`${page} / ${pageCount}`, pageWidth - margin, footerY + 5, { align: 'right' });
