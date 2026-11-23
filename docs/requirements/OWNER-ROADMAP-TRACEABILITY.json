@@ -1387,7 +1387,7 @@
         "apps/workers/search/src/collect.test.ts"
       ],
       "externalEvidence": [],
-      "gap": "Owner-scoped recent outcomes include accepted counts, latest search-run timestamp, and average/latest elapsed source-collection durations when a source call was attempted; permission-blocked calls have no duration. The UI explicitly distinguishes recorded user search history from live provider availability. PR #105 exact head 74b773f6829ba59f70ad42af36d017e889961722 passed all required hosted jobs in run 43988712370 and received exact-SHA technical approval. Current duration instrumentation and browser assertions pass local production build, full typecheck, and focused tests, but exact-head hosted CI and independent review are pending. Cross-user operational telemetry, alerting, and automated suspension remain unimplemented; no provider is activated.",
+      "gap": "Owner-scoped recent search outcomes include accepted counts, timestamp, and per-source duration when attempted; permission-blocked sources have no duration and the UI disclaims live provider availability. Exact head 16ad8cb4b29732733e4b595f08ba0a705c4ba59d passed all required Node 24 hosted CI jobs in run 45190079618. System-wide operational telemetry, alerting, and automated source suspension remain unimplemented; this user-history summary does not show live provider availability. No provider is activated. Independent review and owner checklist verification remain pending.",
       "scopeDisposition": "in-scope"
     },
     {
