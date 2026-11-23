@@ -796,9 +796,12 @@ function LeadEditor({
               className={styles.btnSecondary}
               disabled={pending || record.status === 'archived'}
               onClick={() => {
+                const reminderNotice = record.followUpAt
+                  ? ' Its scheduled follow-up reminder will also be cleared.'
+                  : '';
                 if (
                   window.confirm(
-                    'Archive this lead in CareerScope and save current notes and tags?',
+                    `Archive this lead in CareerScope and save current notes and tags?${reminderNotice}`,
                   )
                 )
                   save.mutate({ status: 'archived', ...changedTags });

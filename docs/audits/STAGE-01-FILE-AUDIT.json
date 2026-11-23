@@ -318,9 +318,9 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed current acknowledgement and follow-up reminder changes. Candidate-reported employer acknowledgements remain unverified; follow-up dates are displayed only when an application is opened.",
-      "evidence": "Current file content hash records reviewed bytes. Exact-head CI, independent review, and owner checklist verification remain pending.",
-      "reviewer": "Codex (Stage 09 items 9.09-9.10)",
-      "sha256": "30867787acebf371bbdd5ab6fddd54e1647877fbd622b2b98a9c4efab36a077f",
+      "evidence": "Reviewed current source and documentation for the Stage 09 reminder archive correction; SHA-256 records the reviewed bytes. Exact-head CI and independent review remain separate gates.",
+      "reviewer": "Codex (Stage 09 reminder archive correction)",
+      "sha256": "0c2fcc872f6480e7d1bae761a904ad1d587fdf2a6fc1fe038d436099b74928b7",
       "history": [
         {
           "sha256": "932098e3115acdb1a639f1b51704ae268d5b39e590fee51f5400258129edb347",
@@ -1351,9 +1351,9 @@
         }
       ],
       "observations": "Reviewed current acknowledgement and follow-up reminder changes. Candidate-reported employer acknowledgements remain unverified; follow-up dates are displayed only when an application is opened.",
-      "evidence": "Current file content hash records reviewed bytes. Exact-head CI, independent review, and owner checklist verification remain pending.",
-      "reviewer": "Codex (Stage 09 items 9.09-9.10)",
-      "sha256": "2ca51a6780fb78f18f890a27b16881aa428972efdb5fe77489d0fdef88fde956",
+      "evidence": "Reviewed current source and documentation for the Stage 09 reminder archive correction; SHA-256 records the reviewed bytes. Exact-head CI and independent review remain separate gates.",
+      "reviewer": "Codex (Stage 09 reminder archive correction)",
+      "sha256": "3fe4cc56c8ab53cbd65c563a57f749f5aa4747c30d3185e99d25dcba71914016",
       "history": [
         {
           "sha256": "40fd54243516b2d64a2265fb7ee2e19e83052960ef5680fe0476c9402b935650",
@@ -1845,9 +1845,9 @@
       "concerns": [],
       "findings": [],
       "observations": "Read in full. Documents owner-controlled candidate application records, candidate-reported evidence and timestamps, revision/history semantics, and the rule that opening a destination does not claim an application was submitted.",
-      "evidence": "Current source content inspected on codex/stage01-item-101-audit.",
-      "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "07d464fbbf216bfaa96494fe1b36bd71495c1d90d72c693b48f977077969001a"
+      "evidence": "Reviewed current source and documentation for the Stage 09 reminder archive correction; SHA-256 records the reviewed bytes. Exact-head CI and independent review remain separate gates.",
+      "reviewer": "Codex (Stage 09 reminder archive correction)",
+      "sha256": "a39c98fa2b05dde17a99ac6a4f0ed0fe6f357d534559712f2789a72ba93ed21e"
     },
     {
       "path": "docs/ARCHITECTURE.md",
@@ -1909,9 +1909,9 @@
         }
       ],
       "observations": "Reviewed current acknowledgement and follow-up reminder changes. Candidate-reported employer acknowledgements remain unverified; follow-up dates are displayed only when an application is opened.",
-      "evidence": "Current file content hash records reviewed bytes. Exact-head CI, independent review, and owner checklist verification remain pending.",
-      "reviewer": "Codex (Stage 09 items 9.09-9.10)",
-      "sha256": "3e3397e471cb78429c3a6771ff14581030d476f29dc96c3a084dfb6fbdb7d5d6",
+      "evidence": "Reviewed current source and documentation for the Stage 09 reminder archive correction; SHA-256 records the reviewed bytes. Exact-head CI and independent review remain separate gates.",
+      "reviewer": "Codex (Stage 09 reminder archive correction)",
+      "sha256": "5e230d8381f0650da112bd5e510f39e210b815847a912200df862cb8de5505ed",
       "history": [
         {
           "sha256": "63294de61a5fafe40af7f3a6f8667d1750c70a9df636bf1fe7c3c2e7e0b163db",
@@ -2001,9 +2001,9 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed current acknowledgement and follow-up reminder changes. Candidate-reported employer acknowledgements remain unverified; follow-up dates are displayed only when an application is opened.",
-      "evidence": "Current file content hash records reviewed bytes. Exact-head CI, independent review, and owner checklist verification remain pending.",
-      "reviewer": "Codex (Stage 09 items 9.09-9.10)",
-      "sha256": "d135ece0d779f5d6139da515a22b96917001c3de1391239186677055b3f82674",
+      "evidence": "Reviewed current source and documentation for the Stage 09 reminder archive correction; SHA-256 records the reviewed bytes. Exact-head CI and independent review remain separate gates.",
+      "reviewer": "Codex (Stage 09 reminder archive correction)",
+      "sha256": "96887399f47da622046c722d5b772ebc2dbeea62dd06d1f191c2e445bed176cd",
       "history": [
         {
           "reviewer": "Codex (owner Stage 02 item 2.10)",
@@ -2211,9 +2211,9 @@
         }
       ],
       "observations": "Reviewed current acknowledgement and follow-up reminder changes. Candidate-reported employer acknowledgements remain unverified; follow-up dates are displayed only when an application is opened.",
-      "evidence": "Current file content hash records reviewed bytes. Exact-head CI, independent review, and owner checklist verification remain pending.",
-      "reviewer": "Codex (Stage 09 items 9.09-9.10)",
-      "sha256": "8085837252a7c43f675a906abb142cc04b941e3955bd0cd0eae1f09bc829efe0",
+      "evidence": "Reviewed current source and documentation for the Stage 09 reminder archive correction; SHA-256 records the reviewed bytes. Exact-head CI and independent review remain separate gates.",
+      "reviewer": "Codex (Stage 09 reminder archive correction)",
+      "sha256": "8902ad96d8dcf8c874f4ac0be0b07a3755c491d4affd20c30abc56a320664e7f",
       "history": [
         {
           "observations": "Reviewed corrected browser evidence and partial status; prior exact-head findings and remaining gates are stated accurately.",
@@ -2419,9 +2419,9 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed current acknowledgement and follow-up reminder changes. Candidate-reported employer acknowledgements remain unverified; follow-up dates are displayed only when an application is opened.",
-      "evidence": "Current file content hash records reviewed bytes. Exact-head CI, independent review, and owner checklist verification remain pending.",
-      "reviewer": "Codex (Stage 09 items 9.09-9.10)",
-      "sha256": "332a27968e2ae2a8a99055e1d625e6e82e7f9954354f98b809f5eef2e930fc88",
+      "evidence": "Reviewed current source and documentation for the Stage 09 reminder archive correction; SHA-256 records the reviewed bytes. Exact-head CI and independent review remain separate gates.",
+      "reviewer": "Codex (Stage 09 reminder archive correction)",
+      "sha256": "6a97ad196d15b47788bab08e77e5908500a335740d58c65ee4a5df6260bfd186",
       "history": [
         {
           "observations": "Reviewed 4.07 migration and lifecycle/concurrency/browser regression mapping; hosted CI and review remain pending.",
@@ -4733,9 +4733,9 @@
       "concerns": [],
       "findings": [],
       "observations": "Reviewed current acknowledgement and follow-up reminder changes. Candidate-reported employer acknowledgements remain unverified; follow-up dates are displayed only when an application is opened.",
-      "evidence": "Current file content hash records reviewed bytes. Exact-head CI, independent review, and owner checklist verification remain pending.",
-      "reviewer": "Codex (Stage 09 items 9.09-9.10)",
-      "sha256": "7ff5cd7fc6a0a0d34695dc5999144d31456e4db6b225e4c55192ed49b249dc26",
+      "evidence": "Reviewed current source and documentation for the Stage 09 reminder archive correction; SHA-256 records the reviewed bytes. Exact-head CI and independent review remain separate gates.",
+      "reviewer": "Codex (Stage 09 reminder archive correction)",
+      "sha256": "f03ebdfbeed97fc766607fb81cb8e2bea3f24cced7d9613fce82ec54a9966712",
       "history": [
         {
           "sha256": "7293aa9232c7fa877def321d92862c3f8181166f00502e9d5db743b9c65244ed",
@@ -7614,9 +7614,9 @@
         }
       ],
       "observations": "Reviewed the Stage 09 acknowledgement browser failure: changing a saved lead to applied removes it from the saved-screen status scope and intentionally deselects it. The browser journey now opens the same lead in the Applications screen before asserting application-only acknowledgement and follow-up controls.",
-      "evidence": "PR #133 run 45215563638 showed the saved-screen article disappeared after the successful status update; the wait for the acknowledgement region then timed out. The revised flow follows the application into /applications?lead=<id>; local test typing and formatting pass, with exact-head browser CI pending.",
-      "reviewer": "Codex (Stage 09 employer acknowledgement CI correction)",
-      "sha256": "b65edc20fd4d2bd0c6bc4315953f2156235038447cd9af0532964c00ef627c10",
+      "evidence": "Reviewed current source and documentation for the Stage 09 reminder archive correction; SHA-256 records the reviewed bytes. Exact-head CI and independent review remain separate gates.",
+      "reviewer": "Codex (Stage 09 reminder archive correction)",
+      "sha256": "d9369c59439fdb01efc24b429e42ee38a5b6cd18f428e6f550230ebc43ea10b6",
       "history": [
         {
           "observations": "Reviewed the search-start browser assertion: the publisher may mark the command published before the UI test queries the pending-only queue. The test now selects the durable outbox record by the response run id, validates the command through commandSchema, and no longer depends on publishedAt timing. Database-backed execution is pending hosted CI.",

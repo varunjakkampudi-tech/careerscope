@@ -22,7 +22,9 @@ not contain sensitive data.
 
 `saved_leads.follow_up_at` stores a candidate-selected follow-up date. Changes
 are revisioned and copied into `lead_history`, including when a reminder is
-cleared. The current product displays the date when the candidate opens that
+cleared. Leaving the application lifecycle for `saved` or `archived` clears an
+active reminder in that same revision; archive confirmation discloses this.
+The current product displays the date when the candidate opens that
 application; it does not proactively notify the candidate.
 
 OTP authentication uses `email_otp_challenges` with a unique HMAC-derived email

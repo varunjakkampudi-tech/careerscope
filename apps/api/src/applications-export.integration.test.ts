@@ -300,6 +300,45 @@ test(
       );
       assert.ok(docs.json().paths['/api/leads/{id}/employer-acknowledgements']?.post);
       assert.ok(docs.json().paths['/api/leads/{id}/history']?.get);
+
+      const applicationBeforeReminderArchive = await app.inject({
+        url: `/api/leads/${candidateOnlyApplicationId}`,
+        headers: { cookie },
+      });
+      assert.equal(applicationBeforeReminderArchive.statusCode, 200);
+      const archiveFollowUp = await app.inject({
+        method: 'PUT',
+        url: `/api/leads/${candidateOnlyApplicationId}`,
+        headers: { origin, cookie, 'x-csrf-token': session.csrf },
+        payload: {
+          revision: applicationBeforeReminderArchive.json().revision,
+          notes: applicationBeforeReminderArchive.json().notes,
+          status: 'applied',
+          followUpAt: '2030-05-11T10:00:00.000Z',
+        },
+      });
+      assert.equal(archiveFollowUp.statusCode, 200, archiveFollowUp.body);
+      const archivedWithReminder = await app.inject({
+        method: 'PUT',
+        url: `/api/leads/${candidateOnlyApplicationId}`,
+        headers: { origin, cookie, 'x-csrf-token': session.csrf },
+        payload: {
+          revision: archiveFollowUp.json().revision,
+          notes: archiveFollowUp.json().notes,
+          status: 'archived',
+        },
+      });
+      assert.equal(archivedWithReminder.statusCode, 200, archivedWithReminder.body);
+      assert.equal(archivedWithReminder.json().followUpAt, null);
+      assert.equal(archivedWithReminder.json().applicationEvidence.method, 'Employer website');
+      const archiveHistory = await app.inject({
+        url: `/api/leads/${candidateOnlyApplicationId}/history`,
+        headers: { cookie },
+      });
+      assert.equal(archiveHistory.statusCode, 200, archiveHistory.body);
+      assert.equal(archiveHistory.json().items[0].status, 'archived');
+      assert.equal(archiveHistory.json().items[0].followUpChanged, true);
+      assert.equal(archiveHistory.json().items[0].followUpAt, null);
     } finally {
       await app?.close();
       await database.close();

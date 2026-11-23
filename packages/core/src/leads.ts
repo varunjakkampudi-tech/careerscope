@@ -412,9 +412,21 @@ export class LeadRepository {
       }
       if (current.revision !== changes.revision)
         throw new LeadRevisionConflict('Lead revision changed');
+      // A follow-up is actionable only while the lead is in an application
+      // lifecycle state. Leaving that scope clears the reminder in the same
+      // revision so archive/restore cannot strand a hidden reminder.
+      const progressedStatuses: LeadRecord['status'][] = [
+        'applied',
+        'interviewing',
+        'offer',
+        'rejected',
+        'withdrawn',
+      ];
       const followUpAt =
         changes.followUpAt === undefined
-          ? current.followUpAt
+          ? progressedStatuses.includes(changes.status)
+            ? current.followUpAt
+            : null
           : changes.followUpAt === null
             ? null
             : new Date(changes.followUpAt);
@@ -444,13 +456,6 @@ export class LeadRepository {
         ]);
       }
       // Statuses that represent an application lifecycle step and therefore need candidate-reported evidence.
-      const progressedStatuses: LeadRecord['status'][] = [
-        'applied',
-        'interviewing',
-        'offer',
-        'rejected',
-        'withdrawn',
-      ];
       if (followUpAt && (!applicationEvidence || !progressedStatuses.includes(changes.status))) {
         throw new z.ZodError([
           {

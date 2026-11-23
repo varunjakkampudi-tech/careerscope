@@ -4228,7 +4228,10 @@ try {
         .getByRole('region', { name: 'Interview organizer' });
       await persistedOrganizer.getByText('Technical interview', { exact: true }).waitFor();
       await persistedOrganizer.getByText('completed', { exact: true }).waitFor();
-      await page.once('dialog', (dialog) => dialog.accept());
+      await page.once('dialog', (dialog) => {
+        assert.match(dialog.message(), /scheduled follow-up reminder will also be cleared/i);
+        void dialog.accept();
+      });
       const archiveApplication = page.waitForResponse(
         (response) =>
           response.url().endsWith(`/api/leads/${leadId}`) && response.request().method() === 'PUT',
@@ -4236,6 +4239,7 @@ try {
       await applicationDetails.getByRole('button', { name: 'Archive in CareerScope' }).click();
       assert.equal((await archiveApplication).status(), 200);
       assert.equal((await leadRepository.get(ownerId, leadId))?.status, 'archived');
+      assert.equal((await leadRepository.get(ownerId, leadId))?.followUpAt, null);
       assert.equal(
         (await leadRepository.get(ownerId, leadId))?.applicationEvidence?.method,
         'Employer website',
