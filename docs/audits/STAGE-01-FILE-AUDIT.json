@@ -2259,10 +2259,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Stage 10.11 evidence records 9/9 focused PDF tests, 396 passing tests on functional source commit 22a5690, exact-head hosted run 45154220385, and independent bounded implementation review. The production-image job was skipped; owner and native/cross-browser acceptance remain pending.",
-      "evidence": "Updated Stage 10.11 evidence with exact-head hosted run 45154220385 and independent bounded code-review approval at 75345b5e53015cc0cd83f4336af94f88f8ab0d03. Production-image job was skipped; native/cross-browser and owner verification remain pending.",
-      "reviewer": "Codex (CareerScope Stage 10.11 review corrections)",
-      "sha256": "b100bc10b265f6f8eb98b809edab6de3508b58f0fb47451fd430e38cd017af1e",
+      "observations": "Reconciled Stage 10.11 evidence after hosted exact-head cross-browser PDF download acceptance; item remains partial pending native PDF viewer and owner verification.",
+      "evidence": "Hosted cross-browser run 45164018450 passed on exact browser-test head 30e1cef6fa61bcee49390db0229fc72a4c2f1abe across Chromium, Firefox, and WebKit, including browser, axe accessibility, keyboard, and responsive checks. This does not verify native PDF viewer rendering; owner acceptance remains pending.",
+      "reviewer": "Codex (CareerScope Stage 10.11 cross-browser evidence reconciliation)",
+      "sha256": "7cf58bc0896612dc4ce80ee6b783bed996043739d260f578ad14dc0fcdd74f95",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -2524,6 +2524,12 @@
           "reviewer": "Codex (Stage 10.11 geometry review closeout)",
           "sha256": "0cff1fb35564da9d4ba1a38be61773400798c0b55fda0a37945a90d65df53cdc",
           "observations": "Reconciled final Stage 10.11 evidence to corrected exact head f063df844cf23b292341f017bf5997f92ba354a4, successful exact-head CI run 45133065368 attempt 2, and independent approval. Owner acceptance and PDF native/cross-browser limitations remain open."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.11 cross-browser evidence reconciliation)",
+          "sha256": "7cf58bc0896612dc4ce80ee6b783bed996043739d260f578ad14dc0fcdd74f95",
+          "observations": "Updated checklist and test documentation to record hosted cross-browser Unicode PDF download success while retaining native viewer and owner acceptance gaps.",
+          "evidence": "Hosted cross-browser run 45164018450 passed on exact browser-test head 30e1cef6fa61bcee49390db0229fc72a4c2f1abe across Chromium, Firefox, and WebKit, including browser, axe accessibility, keyboard, and responsive checks. This does not verify native PDF viewer rendering; owner acceptance remains pending."
         }
       ]
     },
@@ -2598,10 +2604,10 @@
           "remediation": "Replaced the changing count with a link to the JSON record, the source of current coverage counts."
         }
       ],
-      "observations": "Stage 10.11 progress records exact-head hosted run 45154220385 and the independent bounded implementation approval, while keeping the production-image, native/cross-browser, and owner gates explicit. The checklist item remains partial.",
-      "evidence": "Updated Stage 10.11 progress with exact-head hosted run 45154220385 and independent bounded code-review approval at 75345b5e53015cc0cd83f4336af94f88f8ab0d03. Production-image job was skipped; native/cross-browser and owner verification remain pending.",
-      "reviewer": "Codex (CareerScope Stage 10.11 review corrections)",
-      "sha256": "6b092ed56e936d2cf3aac1a592de02014024f3eb8c8f14a058763b8477724b4b",
+      "observations": "Reconciled Stage 10.11 evidence after hosted exact-head cross-browser PDF download acceptance; item remains partial pending native PDF viewer and owner verification.",
+      "evidence": "Hosted cross-browser run 45164018450 passed on exact browser-test head 30e1cef6fa61bcee49390db0229fc72a4c2f1abe across Chromium, Firefox, and WebKit, including browser, axe accessibility, keyboard, and responsive checks. This does not verify native PDF viewer rendering; owner acceptance remains pending.",
+      "reviewer": "Codex (CareerScope Stage 10.11 cross-browser evidence reconciliation)",
+      "sha256": "157ca2fdfd3a03225b67a0fbccbdfc5e7e72fd620f94855a2ab65fbf500b72e5",
       "history": [
         {
           "reviewer": "Codex (CareerScope Stage 10 review evidence reconciliation)",
@@ -2845,6 +2851,12 @@
           "reviewer": "Codex (Stage 10.11 geometry review closeout)",
           "sha256": "7c50ddaffbfc87c2bc1423eb35bd0b28637886bf3738a2c444a5224862baf732",
           "observations": "Reconciled final Stage 10.11 evidence to corrected exact head f063df844cf23b292341f017bf5997f92ba354a4, successful exact-head CI run 45133065368 attempt 2, and independent approval. Owner acceptance and PDF native/cross-browser limitations remain open."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.11 cross-browser evidence reconciliation)",
+          "sha256": "157ca2fdfd3a03225b67a0fbccbdfc5e7e72fd620f94855a2ab65fbf500b72e5",
+          "observations": "Updated checklist and test documentation to record hosted cross-browser Unicode PDF download success while retaining native viewer and owner acceptance gaps.",
+          "evidence": "Hosted cross-browser run 45164018450 passed on exact browser-test head 30e1cef6fa61bcee49390db0229fc72a4c2f1abe across Chromium, Firefox, and WebKit, including browser, axe accessibility, keyboard, and responsive checks. This does not verify native PDF viewer rendering; owner acceptance remains pending."
         }
       ]
     },
@@ -2899,10 +2911,10 @@
       "state": "reviewed",
       "concerns": [],
       "findings": [],
-      "observations": "Reconciled final Stage 10.11 evidence to corrected exact head f063df844cf23b292341f017bf5997f92ba354a4, successful exact-head CI run 45133065368 attempt 2, and independent approval. Owner acceptance and PDF native/cross-browser limitations remain open.",
-      "evidence": "Corrected head f063df844cf23b292341f017bf5997f92ba354a4 passed required CI run 45133065368 on attempt 2 and received independent exact-SHA approval.",
-      "reviewer": "Codex (Stage 10.11 geometry review closeout)",
-      "sha256": "2f501f607fc1d4f2e5c5093c90388bbd7eafe3028ef8b453c71e06fcef288e1a",
+      "observations": "Reconciled Stage 10.11 evidence after hosted exact-head cross-browser PDF download acceptance; item remains partial pending native PDF viewer and owner verification.",
+      "evidence": "Hosted cross-browser run 45164018450 passed on exact browser-test head 30e1cef6fa61bcee49390db0229fc72a4c2f1abe across Chromium, Firefox, and WebKit, including browser, axe accessibility, keyboard, and responsive checks. This does not verify native PDF viewer rendering; owner acceptance remains pending.",
+      "reviewer": "Codex (CareerScope Stage 10.11 cross-browser evidence reconciliation)",
+      "sha256": "7ed55b65067caee80c0785a77c9fc797037cbb7527f62b4b157e91b0cc8254e3",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -3152,6 +3164,12 @@
           "reviewer": "Codex (Stage 10.11 geometry review closeout)",
           "sha256": "2f501f607fc1d4f2e5c5093c90388bbd7eafe3028ef8b453c71e06fcef288e1a",
           "observations": "Reconciled final Stage 10.11 evidence to corrected exact head f063df844cf23b292341f017bf5997f92ba354a4, successful exact-head CI run 45133065368 attempt 2, and independent approval. Owner acceptance and PDF native/cross-browser limitations remain open."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.11 cross-browser evidence reconciliation)",
+          "sha256": "7ed55b65067caee80c0785a77c9fc797037cbb7527f62b4b157e91b0cc8254e3",
+          "observations": "Updated checklist and test documentation to record hosted cross-browser Unicode PDF download success while retaining native viewer and owner acceptance gaps.",
+          "evidence": "Hosted cross-browser run 45164018450 passed on exact browser-test head 30e1cef6fa61bcee49390db0229fc72a4c2f1abe across Chromium, Firefox, and WebKit, including browser, axe accessibility, keyboard, and responsive checks. This does not verify native PDF viewer rendering; owner acceptance remains pending."
         }
       ]
     },
@@ -3590,10 +3608,10 @@
       "state": "reviewed",
       "concerns": ["Current diff reviewed; full historical file audit not repeated"],
       "findings": [],
-      "observations": "Canonical item 10.11 evidence is reconciled to exact-head hosted run 45154220385 and independent bounded implementation approval. The Docker production-image job was skipped, and native/cross-browser acceptance plus owner verification remain open; status remains partial.",
-      "evidence": "Reconciled canonical item 10.11 with exact-head hosted run 45154220385, independent bounded code-review approval at 75345b5e53015cc0cd83f4336af94f88f8ab0d03, and explicit image-build/native-browser/owner acceptance gaps. Checklist status remains partial.",
-      "reviewer": "Codex (Stage 10.11 Unicode extension review)",
-      "sha256": "234bae8f2ba98afbeea6d3e1b1a99a5114ec163ec7146aa547f99498d996e393",
+      "observations": "Reconciled Stage 10.11 evidence after hosted exact-head cross-browser PDF download acceptance; item remains partial pending native PDF viewer and owner verification.",
+      "evidence": "Hosted cross-browser run 45164018450 passed on exact browser-test head 30e1cef6fa61bcee49390db0229fc72a4c2f1abe across Chromium, Firefox, and WebKit, including browser, axe accessibility, keyboard, and responsive checks. This does not verify native PDF viewer rendering; owner acceptance remains pending.",
+      "reviewer": "Codex (CareerScope Stage 10.11 cross-browser evidence reconciliation)",
+      "sha256": "463816a463f965a0e88afba499ee3ee226794fd6e1ea6be127d958ec489e1626",
       "history": [
         {
           "reviewer": "Codex (Stage 10.11 independent-review corrections)",
@@ -3837,6 +3855,12 @@
           "reviewer": "Codex (Stage 10.11 geometry review closeout)",
           "sha256": "0b7ad069d0ed4a2521d7a289fab0ce262daa2dd4b45ca3f123baf9efa6596e84",
           "observations": "Reconciled final Stage 10.11 evidence to corrected exact head f063df844cf23b292341f017bf5997f92ba354a4, successful exact-head CI run 45133065368 attempt 2, and independent approval. Owner acceptance and PDF native/cross-browser limitations remain open."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.11 cross-browser evidence reconciliation)",
+          "sha256": "463816a463f965a0e88afba499ee3ee226794fd6e1ea6be127d958ec489e1626",
+          "observations": "Updated checklist and test documentation to record hosted cross-browser Unicode PDF download success while retaining native viewer and owner acceptance gaps.",
+          "evidence": "Hosted cross-browser run 45164018450 passed on exact browser-test head 30e1cef6fa61bcee49390db0229fc72a4c2f1abe across Chromium, Firefox, and WebKit, including browser, axe accessibility, keyboard, and responsive checks. This does not verify native PDF viewer rendering; owner acceptance remains pending."
         }
       ]
     },
@@ -8396,10 +8420,10 @@
           "remediation": "Hold the exact foreign-owner response through account switching, validate its body and 80% score, release via route.fulfill, and assert owner A remains at 100% after render. Hosted exact-head run 42570381867 passed all required jobs, including browser, axe, keyboard and responsive checks on db7a7df3011c344dd6a8d2dab64196287ffa787b."
         }
       ],
-      "observations": "Added browser assertions for the app-managed PDF download, sanitized role-specific filename, PDF metadata/page object, extracted candidate-authored text, and unsupported-script fallback.",
-      "evidence": "Browser acceptance is present in source; run on the new exact head remains pending. Existing focused local PDF/parser smoke and type checks passed.",
+      "observations": "Browser regression asserts the app-managed PDF download, sanitized role-specific filename, PDF structure, extracted candidate-authored Unicode text, success feedback, and unsupported-script fallback.",
+      "evidence": "Exact browser-test head 30e1cef6fa61bcee49390db0229fc72a4c2f1abe passed hosted cross-browser run 45164018450 on Chromium, Firefox, and WebKit, including browser, axe accessibility, keyboard, and responsive checks. Native PDF viewer rendering and owner acceptance remain pending.",
       "reviewer": "Codex (CareerScope Stage 10.11 PDF export implementation)",
-      "sha256": "5e50eab4f3a562295300e66901a765a5b32092271764acc327b60b432ca9468d",
+      "sha256": "6d24f837593ff42aba7e10c613dfd5ee4e9d565b136db14fac5c3dc90afe1aa0",
       "history": [
         {
           "reviewer": "Codex (CareerScope Stage 10 acceptance coverage)",
@@ -8484,6 +8508,12 @@
           "sha256": "c6e6f2641dd01530d232a6106f7f578751dc13dc49d7243bc36d5d316228fcdc",
           "observations": "The Stage 10.09 comparison scenario now removes a previously saved experience bullet and asserts it remains highlighted only in the saved version. Print assertions verify the saved article is hidden and current article visible while changed-text highlight backgrounds are transparent.",
           "evidence": "Focused hosted browser run 45046336500 and all three exact-head PR jobs in 45046342004 passed on SHA 6280c28e7d82d174a13dec85d659da3cde078c7d. New removal and print-visibility assertions are pending validation on the next exact head."
+        },
+        {
+          "reviewer": "Codex (CareerScope Stage 10.11 cross-browser PDF regression closeout)",
+          "sha256": "6d24f837593ff42aba7e10c613dfd5ee4e9d565b136db14fac5c3dc90afe1aa0",
+          "observations": "The Stage 10.11 browser regression waits for the app-managed PDF download, validates its sanitized role-specific filename, PDF header/page object, extracted Greek and Cyrillic candidate-authored text, and success feedback. Unsupported Telugu retains the print/save fallback.",
+          "evidence": "Exact browser-test head 30e1cef6fa61bcee49390db0229fc72a4c2f1abe passed hosted cross-browser run 45164018450 on Chromium, Firefox, and WebKit, including browser, axe accessibility, keyboard, and responsive checks. Native PDF viewer rendering and owner acceptance remain pending."
         }
       ]
     },
