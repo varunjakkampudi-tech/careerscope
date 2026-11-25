@@ -113,7 +113,22 @@ test(
         'noeviction',
       );
       await until(
-        async () => (await docker('exec', id, 'redis-cli', 'ping')) === 'PONG',
+        async () => {
+          try {
+            return (await docker('exec', id, 'redis-cli', 'ping')) === 'PONG';
+          } catch (error) {
+            // Redis can be starting while the container is already running.
+            if (
+              error instanceof Error &&
+              'stderr' in error &&
+              typeof error.stderr === 'string' &&
+              error.stderr.includes('Connection refused')
+            ) {
+              return false;
+            }
+            throw error;
+          }
+        },
         'Redis readiness',
       );
       const binding = await docker('port', id, '6379/tcp');
