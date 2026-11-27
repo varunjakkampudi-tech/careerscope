@@ -112,25 +112,22 @@ test(
         '--maxmemory-policy',
         'noeviction',
       );
-      await until(
-        async () => {
-          try {
-            return (await docker('exec', id, 'redis-cli', 'ping')) === 'PONG';
-          } catch (error) {
-            // Redis can be starting while the container is already running.
-            if (
-              error instanceof Error &&
-              'stderr' in error &&
-              typeof error.stderr === 'string' &&
-              error.stderr.includes('Connection refused')
-            ) {
-              return false;
-            }
-            throw error;
+      await until(async () => {
+        try {
+          return (await docker('exec', id, 'redis-cli', 'ping')) === 'PONG';
+        } catch (error) {
+          // Redis can be starting while the container is already running.
+          if (
+            error instanceof Error &&
+            'stderr' in error &&
+            typeof error.stderr === 'string' &&
+            error.stderr.includes('Connection refused')
+          ) {
+            return false;
           }
-        },
-        'Redis readiness',
-      );
+          throw error;
+        }
+      }, 'Redis readiness');
       const binding = await docker('port', id, '6379/tcp');
       assert.match(binding, /^127\.0\.0\.1:\d+$/);
       return `redis://${binding}`;
