@@ -7352,7 +7352,7 @@
       "observations": "Read the complete file. Queue acceptance uses a pinned Redis image, random labeled containers/volumes and isolated database; ports bind to loopback and cleanup is limited to resources created by this run. No finding.",
       "evidence": "Complete file reviewed on 2026-11-06; SHA-256 records reviewed bytes.",
       "reviewer": "Codex (Stage 01 item 1.01)",
-      "sha256": "bb972e33483f5f966b314850f85e07a559772229541bc4d5ed8bb10352df091e"
+      "sha256": "035d8d321cf1b3cb703886b2b5296d8e1f9e7c3f3b3a8dff0dbebb92dd8c615b"
     },
     {
       "path": "scripts/tests/check-soak.ts",
